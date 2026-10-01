@@ -241,7 +241,7 @@ void main() {
     // gathers on its far side (bottom right); a bright rim; a small sharp highlight
     float lit = clamp(dot(n, normalize(vec3(-0.45, 0.55, 0.7))), 0.0, 1.0);
     float caus = smoothstep(0.1, 0.85, dot(dq, normalize(vec2(0.55, -0.6)))) * (1.0 - smoothstep(0.8, 1.0, dd));
-    vec3 ember = EMBER * (0.28 + refr * 2.2) * (0.75 + 0.35 * lit);
+    vec3 ember = EMBER * (0.62 + refr * 1.2) * (0.75 + 0.35 * lit);
     ember += vec3(1.0, 0.6, 0.32) * caus * 0.55;
     ember += mix(EMBER, IVORY, 0.35) * fres * 0.55;
     ember += vec3(1.0, 0.96, 0.9) * pow(max(dot(n, H), 0.0), 220.0) * 1.6;
