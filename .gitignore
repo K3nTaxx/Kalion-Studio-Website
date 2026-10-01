@@ -1,0 +1,14 @@
+# dependencies and build output (Netlify rebuilds dist/ itself)
+node_modules/
+dist/
+
+# local tools and editors
+.claude/
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db
+
+# private working notes (not part of the site)
+prompt-site-exceptionnel.md

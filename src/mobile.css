@@ -1,0 +1,365 @@
+/* =========================================================
+   Kalion Studio — the phone layout, and what both layouts share
+   for touch screens. Loaded after styles.css (main.js).
+   ========================================================= */
+
+html { -webkit-tap-highlight-color: transparent; }
+.m-only { display: none; }
+/* phone menu: only on the phone layout */
+.nav__burger,
+.menu { display: none; }
+
+/* a phone held sideways: please turn it back */
+.rotate { display: none; }
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .rotate {
+    position: fixed;
+    inset: 0;
+    z-index: 10100;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 18px;
+    background: radial-gradient(70% 90% at 50% 120%, rgba(255, 91, 36, 0.35), transparent 60%), #100c0a;
+    color: #ece6dc;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .rotate__k { width: 44px; height: auto; animation: rotate-k 2.4s var(--ease) infinite; }
+  @keyframes rotate-k {
+    0%, 30% { transform: rotate(0); }
+    60%, 100% { transform: rotate(-90deg); }
+  }
+}
+
+/* Phones, tablets: the theme (dark / ivory) switches at once instead of fading its colour
+   variables on the root — fading them restyles the whole page every frame, which a phone's
+   processor can't keep up with. (It switches while a scene covers the screen: only the
+   bar on top would show it, so the bar fades on its own.) */
+html.is-touch,
+html.is-mobile { transition: none; }
+html.is-touch .nav,
+html.is-mobile .nav { transition: color 0.9s var(--ease); }
+html.is-touch .lights,
+html.is-mobile .lights { transition: opacity 1.2s var(--ease); }
+
+/* the light rig drawn small on a canvas (phones, tablets: see initLightsCanvas) */
+.lights__cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+html.is-touch .lights i,
+html.is-mobile .lights i { display: none; }
+/* touch screens: the grain stays still (one layer less to move every frame) */
+html.is-touch .grain,
+html.is-mobile .grain { inset: 0; animation: none; opacity: 0.45; }
+/* no hover on a touch screen: what hovering revealed is simply shown, and a tapped button
+   doesn't stay filled with ember (a touch screen keeps the last tapped element "hovered");
+   the liquid fills while the finger presses it instead */
+@media (hover: none) {
+  .pcard__go { opacity: 1; transform: none; }
+  .btn:hover::before { transform: translateY(102%); }
+  .channel:hover::before { transform: translateY(105%); }
+  .btn--solid:hover,
+  .btn--pill:hover { color: var(--bg); }
+  .btn--ghost:hover { color: var(--fg); border-color: var(--line-strong); }
+  .btn:hover .btn__icon { background: var(--bg); color: var(--fg); }
+  .btn--ghost:hover .btn__icon { background: var(--fg); color: var(--bg); }
+  .btn:hover .btn__icon svg,
+  .channel:hover .channel__arrow { transform: none; }
+  .channel:hover { color: inherit; padding-left: 0; }
+  .channel:hover .channel__value { color: var(--fg-2); }
+  .btn:active::before,
+  .channel:active::before { transform: translateY(0); transition-duration: 0.25s; }
+  .btn:active,
+  .channel:active { color: var(--ink); }
+}
+
+/* =========================================================
+   PHONE LAYOUT (portrait screens and small windows)
+   The same journey, recomposed for a tall, narrow screen. --bar: the room the
+   browser's bars can take at the bottom (the scenes are as tall as the screen
+   without them): what must stay readable sits above it.
+   ========================================================= */
+@media (max-aspect-ratio: 1/1), (max-width: 760px), (pointer: coarse) and (max-height: 500px) {
+  :root {
+    --pad: 5.6vw;
+    --bar: 0px;
+    --top: 74px; /* under the menu bar */
+  }
+  /* (nothing may push the page sideways: the manifesto is magnified as it arrives) */
+  html,
+  body { overflow-x: hidden; overflow-x: clip; }
+  body { font-size: 15px; }
+  /* (a custom property never falls back: the browsers without lvh/svh keep 0) */
+  @supports (height: 100lvh) {
+    :root { --bar: calc(100lvh - 100svh); }
+  }
+  .mono { font-size: 10px; }
+  .d-only { display: none; }
+  .m-only { display: inline; }
+  .indicator { display: none; }
+
+  /* ---------- nav + menu ---------- */
+  .nav { grid-template-columns: 1fr auto; padding: 14px var(--pad); }
+  .nav__links { display: none; }
+  .nav__logo { height: 22px; }
+  .nav__right { gap: 10px; }
+  .btn { height: 50px; padding: 0 8px 0 22px; font-size: 15px; gap: 0.8em; }
+  .btn--pill { height: 42px; padding: 0 6px 0 18px; font-size: 14px; }
+  .btn--ghost { padding: 0 8px 0 22px; }
+  .btn__icon { margin-right: 0; }
+  .nav__burger {
+    position: relative;
+    display: grid;
+    place-content: center;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    transition: background-color 0.5s, border-color 0.5s, color 0.5s;
+  }
+  .nav__burger i {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.6s var(--ease);
+  }
+  html.menu-open .nav__burger { background: var(--ivory); border-color: var(--ivory); color: var(--ink); }
+  html.menu-open .nav__burger i:first-child { transform: translateY(3.25px) rotate(45deg); }
+  html.menu-open .nav__burger i:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+  html.menu-open .nav,
+  html.menu-open .nav__logo { color: var(--ivory); }
+  html.menu-open .nav .btn--pill { background: var(--ivory); color: var(--ink); }
+  html.menu-open .nav .btn--pill .btn__icon { background: var(--ink); color: var(--ivory); }
+  html.menu-open .nav::before { opacity: 0; }
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 190;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6vw;
+    padding: calc(var(--top) + 6vw) var(--pad) calc(22px + env(safe-area-inset-bottom));
+    /* (a short screen: the menu scrolls inside itself, never the page under it) */
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    color: var(--ivory);
+    background:
+      radial-gradient(90vmax 70vmax at 0% 110%, rgba(255, 91, 36, 0.38), transparent 60%),
+      radial-gradient(60vmax 50vmax at 110% 10%, rgba(255, 143, 77, 0.16), transparent 60%),
+      #100c0a;
+    clip-path: circle(0px at 100% 0%);
+  }
+  .menu[hidden] { display: none; }
+  .menu__links { display: flex; flex-direction: column; }
+  .menu__links a {
+    display: flex;
+    align-items: baseline;
+    gap: 4.4vw;
+    padding: 0.9vh 0;
+    font-family: var(--serif);
+    font-size: min(11vw, 5.6vh);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .menu__links a:active .menu__t { color: var(--ember); }
+  .menu__n { width: 6vw; color: var(--ember); }
+  .menu__foot { display: flex; flex-direction: column; align-items: flex-start; gap: 5vw; }
+  .menu__foot .btn--solid { background: var(--ivory); color: var(--ink); }
+  .menu__foot .btn__icon { background: var(--ink); color: var(--ivory); }
+  .menu__reach { display: flex; gap: 6vw; color: rgba(236, 230, 220, 0.7); }
+  .menu__reach a { border-bottom: 1px solid rgba(255, 91, 36, 0.6); padding-bottom: 2px; }
+
+  /* ---------- hero ---------- */
+  .hero__bottom {
+    left: var(--pad);
+    right: var(--pad);
+    bottom: calc(var(--bar) + 30px);
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ---------- manifesto ---------- */
+  .about__pin { gap: 7vw; padding: 0 var(--pad); }
+  .about__text { max-width: none; font-size: 9.4vw; line-height: 1.08; }
+  .about__sub { max-width: none; margin-left: 0; font-size: 5.6vw; line-height: 1.24; }
+
+  /* ---------- engagements ---------- */
+  .pillars__title { top: 14%; padding: 0 var(--pad); font-size: 14vw; line-height: 0.95; white-space: normal; }
+  .vows { left: var(--pad); right: var(--pad); width: auto; bottom: calc(var(--bar) + 8vw); }
+  .vow__title { font-size: 12.5vw; }
+  .vow__text { max-width: none; margin-top: 3.6vw; font-size: 15px; line-height: 1.5; }
+  .pillars__rail { display: none; }
+  .pillars.is-static .vows { grid-template-columns: 1fr; gap: 10vw; }
+
+  /* ---------- projects ---------- */
+  .pband { gap: 1.4vw; }
+  .pband__track { font-size: 15vw; gap: 5vw; padding-right: 5vw; }
+  .projects__track { --cw: 84vw; gap: 7vw; padding-top: 0; }
+  .pcard__media { border-radius: 2.6vw; }
+  .pcard__media > img { width: 110%; margin-left: -5%; }
+  .pcard__go { right: 3vw; bottom: 3vw; }
+  .pcard__info { grid-template-columns: 8vw 1fr; gap: 0 2vw; margin-top: 4.4vw; }
+  .pcard__idx { padding-top: 2vw; }
+  .pcard__title { font-size: 7.6vw; }
+  .pcard__desc { max-width: none; margin-top: 2.2vw; font-size: 13.5px; line-height: 1.5; }
+  .pcard__tags { grid-column: 2; justify-content: flex-start; max-width: none; gap: 1.6vw; padding-top: 3.4vw; }
+  .pcard__open { grid-column: 2; justify-self: start; margin-top: 4vw; }
+  .more-fan img { border-radius: 1.2vw; }
+  .more-fan__count { left: 4vw; bottom: 3vw; font-size: 10vw; }
+  .projects__hud { bottom: calc(var(--bar) + 6vw); gap: 4vw; }
+  .projects__hud-count { font-size: 7.4vw; }
+  .projects.no-3d .projects__word { font-size: 22vw; }
+
+  /* the panel of the other sites */
+  .more__inner { padding: 0 var(--pad) 14vw; }
+  .more__head { flex-direction: column; align-items: stretch; gap: 8vw; padding: 5vw 0 9vw; }
+  .more__close { align-self: flex-end; order: -1; }
+  .more__title { font-size: 13vw; }
+  .more__grid { grid-template-columns: 1fr; gap: 11vw; }
+  .mtile__media { border-radius: 2.4vw; }
+  .mtile__info { grid-template-columns: 8vw 1fr; gap: 0 2vw; margin-top: 3.8vw; }
+  .mtile__idx { padding-top: 1.6vw; }
+  .mtile__title { font-size: 7.4vw; }
+  .mtile__desc { margin-top: 1.8vw; font-size: 13.5px; }
+  .more__cta { gap: 4vw; margin-top: 13vw; padding: 13vw 6vw; border-radius: 3.4vw; }
+  .more__cta strong { font-size: 15vw; }
+
+  /* ---------- reviews ---------- */
+  .rv-head { left: var(--pad); right: var(--pad); top: var(--top); }
+  .rv-title { font-size: 10.4vw; }
+  .rv-score { gap: 2.6vw; margin-top: 2.6vw; }
+  .rv-score__num { font-size: 6.4vw; }
+  .rv-score__stars { font-size: 12px; }
+  .reviews.no-gl .reviews__pin { padding: 28vw var(--pad) 14vw; }
+  .reviews.no-gl .rv-list { grid-template-columns: 1fr; gap: 9vw; }
+  .reviews.no-gl .rv blockquote { font-size: 5.4vw; }
+
+  /* ---------- pricing ---------- */
+  .pr-head { left: var(--pad); top: var(--top); }
+  .pr-title { font-size: 10.4vw; }
+  /* (it keeps clear of the "sur-mesure" bubble, top right) */
+  .pr-lead { max-width: calc(100vw - 2 * var(--pad) - 84px); margin-top: 1.6vw; font-size: 13.5px; }
+  .pr-q {
+    left: var(--pad);
+    max-width: 60vw;
+    top: calc(var(--top) + 25vw);
+    flex-wrap: wrap;
+    gap: 0.4em 0.9em;
+    white-space: normal;
+    transform: none;
+  }
+  .pr-q i { width: 6vw; }
+  .pr-core strong { font-size: 6.6vw; }
+  .pr-core .mono { font-size: 9px; }
+  .pr-inc__t { font-size: 16.5px; }
+  .pr-in { gap: 1.3vw; }
+  .pr-name { max-width: 27vw; white-space: normal; line-height: 1.3; font-size: 8.5px; }
+  .pr-price { font-size: 7.8vw; }
+  .pr-price small { margin-bottom: 1vw; font-size: 8.5px; }
+  .pr-badge { padding: 0.4em 0.8em; font-size: 8px; letter-spacing: 0.03em; }
+  /* the details: two columns, each between the screen edge and the middle (the drops sit at
+     22.8 % and 77.2 % of the width: see initPricing, xOff) */
+  .pr-out { top: calc(var(--r, 100px) + 4vw); width: calc(50vw - var(--pad) - 8px); gap: 3.4vw; transform: none; }
+  [data-drop=vitrine] .pr-out,
+  [data-drop=once] .pr-out { left: calc(var(--pad) - 22.8vw); }
+  [data-drop=mesure] .pr-out,
+  [data-drop=sub] .pr-out { left: calc(8px - 27.2vw); }
+  .pr-dots { gap: 1.8vw; }
+  .pr-dots li { font-size: 12.5px; line-height: 1.38; }
+  .pr-list { font-size: 11.5px; }
+  .pr-list li { flex-direction: column; gap: 0.1em; padding: 1.25vw 0; }
+  .pr-list li span:last-child { text-align: left; }
+  .pr-out .btn { height: 40px; padding: 0 5px 0 15px; font-size: 13px; }
+  @media (max-height: 720px) {
+    .pr-out { top: calc(var(--r, 100px) + 2.6vw); gap: 2.4vw; }
+    .pr-list { font-size: 11px; line-height: 1.25; }
+    .pr-list li { padding: 0.7vw 0; }
+    .pr-dots li { font-size: 12px; line-height: 1.3; }
+    .pr-out .btn { height: 36px; }
+  }
+  .pr-mini strong { font-size: 12px; }
+  .pr-mini .mono { font-size: 7.5px; }
+
+  /* ---------- FAQ ---------- */
+  .faq { grid-template-columns: 1fr; gap: 9vw; padding: 26vw var(--pad) 18vw; }
+  .faq__aside { position: static; }
+  .faq__title { font-size: 11.4vw; }
+  .faq__more { margin-top: 4vw; font-size: 14px; }
+  .faq__list { padding-left: 6vw; }
+  .faq__q { grid-template-columns: 8vw 1fr auto; gap: 3vw; padding: 4.6vw 0; }
+  .faq__label { font-size: 5.3vw; }
+  .faq__icon { width: 34px; height: 34px; }
+  .faq__q:hover .faq__label { transform: none; }
+  .faq__a-in { padding: 0 2vw 5vw 11vw; }
+  .faq__a p { max-width: none; font-size: 14.5px; }
+
+  /* ---------- contact (not pinned: see initContactMobile) ---------- */
+  .contact__pin {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8vw;
+    padding: 22vw var(--pad) 16vw;
+    overflow: hidden;
+    overflow: clip;
+  }
+  .contact__title { position: static; font-size: 13vw; }
+  .contact__side { display: contents; }
+  .contact__lead { order: 1; max-width: none; font-size: 15px; }
+  .letter { order: 2; }
+  .contact__channels { order: 3; margin-top: 2vw; }
+  .channel { gap: 4vw; padding: 4.4vw 1vw 4.4vw 0; }
+  .channel:hover { padding-left: 0; }
+  .channel__name { font-size: 6.6vw; }
+  .channel__arrow { font-size: 4.6vw; }
+  .fold__face { gap: 5vw; padding: 4.6vw 5.6vw; }
+  .fold--1 .fold__face { padding-top: 6.4vw; border-radius: 4vw 4vw 0 0; }
+  .fold--3 .fold__face { padding-bottom: 6.4vw; border-radius: 0 0 4vw 4vw; }
+  .fold--1 .fold__back { border-radius: 0 0 4vw 4vw; }
+  .fold--3 .fold__back { border-radius: 4vw 4vw 0 0; }
+  .letter__logo { gap: 2.6vw; }
+  .letter__symbol { height: 30px; }
+  .letter__word { font-size: 20px; }
+  .form__row { grid-template-columns: 1fr; gap: 5vw; }
+  .field { gap: 1.4vw; }
+  .field__label { margin-bottom: 0.6vw; }
+  /* (16px at least: iOS zooms into smaller fields) */
+  .field input,
+  .field textarea { padding: 1.8vw 0 2.6vw; font-size: 16px; }
+  .chips { gap: 2vw; }
+  .chips span { padding: 2.3vw 3.8vw; font-size: 13px; }
+  .form__foot { flex-direction: column; align-items: stretch; gap: 4.6vw; margin-top: 1vw; }
+  .send { justify-content: center; height: 54px; padding: 0 5vw; font-size: 15px; }
+
+  /* ---------- footer ---------- */
+  .footer {
+    height: auto;
+    min-height: 100vh;
+    padding: calc(var(--top) + 8vw) var(--pad) calc(18px + env(safe-area-inset-bottom));
+  }
+  /* (the band under the links is the liquid word's: see syncGL) */
+  .footer__top { grid-template-columns: 1fr; gap: 9vw; margin-bottom: 190px; }
+  .footer__cta { gap: 2.4vw; }
+  .footer__big { font-size: 10vw; }
+  .footer__cols { grid-template-columns: 1fr 1fr; gap: 8vw 6vw; }
+  .footer__col { gap: 1.7vw; font-size: 14.5px; }
+  .footer__col .mono { margin-bottom: 1.4vw; }
+  .footer__col:nth-child(3) { grid-column: 1 / -1; flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 2vw 5vw; }
+  .footer__col:nth-child(3) .mono { width: 100%; }
+  .footer__col a:hover,
+  .footer__col button:hover { transform: none; }
+  .footer__bottom { gap: 4vw; }
+  html.no-webgl .footer__fallback { font-size: 22vw; }
+
+  .toast { bottom: calc(var(--bar) + 18px); max-width: 90vw; text-align: center; }
+}

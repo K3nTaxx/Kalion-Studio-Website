@@ -1,0 +1,59 @@
+# Kalion Studio — Netlify
+# Connect the GitHub repository in Netlify: it reads this file, nothing to set by hand.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# ------------------------------------------------------------------
+# Security headers, on every page
+# ------------------------------------------------------------------
+# Content-Security-Policy: everything comes from the site itself (fonts, images, scripts);
+# 'unsafe-inline' for styles only (the preloader's critical styles are inline in the page).
+# When the contact form is connected to a service (Formspree, Resend, Netlify Forms…),
+# add its address to connect-src (and form-action if it posts a form).
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+# ------------------------------------------------------------------
+# Caching
+# ------------------------------------------------------------------
+# the built scripts and styles carry a hash in their name: cached for a year
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# fonts, project screenshots, icons: a month (their names don't change, so not forever)
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json; charset=utf-8"
+
+# (the pages themselves are always revalidated: Netlify's default)

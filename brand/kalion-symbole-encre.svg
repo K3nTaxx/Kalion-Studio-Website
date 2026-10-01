@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+  <radialGradient id="orbS" cx="36%" cy="32%" r="75%">
+    <stop offset="0" stop-color="#FFD2B8"/>
+    <stop offset="0.28" stop-color="#FF8A55"/>
+    <stop offset="0.62" stop-color="#FF5B24"/>
+    <stop offset="1" stop-color="#C73A10"/>
+  </radialGradient>
+  <filter id="orbS-glow" x="-200%" y="-200%" width="500%" height="500%">
+    <feGaussianBlur stdDeviation="18"/>
+  </filter>
+    <mask id="ring"><rect width="1000" height="1000" fill="white"/><circle cx="406" cy="500" r="84" fill="black"/></mask>
+  </defs>
+  
+  <g transform="translate(-54 0)">
+    <path d="M200 150H322V850H200Z" fill="#100C0A"/>
+    <g mask="url(#ring)"><path d="M445.74 543.61L877.59 150L702.41 150L366.26 456.39Z" fill="#100C0A"/><path d="M366.26 543.61L702.41 850L877.59 850L445.74 456.39Z" fill="#100C0A"/></g>
+    <circle cx="406" cy="500" r="56" fill="#FF5B24"/>
+  </g>
+</svg>

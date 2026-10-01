@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kalion Studio</title>
+  <meta name="description" content="Kalion Studio, studio de webdesign indépendant en France. Sites vitrines sur-mesure dès 450 €, ou tout compris dès 250 € puis 28 €/mois. Livrés en 5 à 7 jours." />
+  <meta name="author" content="Kalion Studio" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="%SITE_URL%/" />
+  <meta name="theme-color" content="#100c0a" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="format-detection" content="telephone=no" />
+  <!-- link previews (WhatsApp, LinkedIn, Messenger, X…): %SITE_URL% is the site's full address,
+       written at build time (vite.config.js) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:site_name" content="Kalion Studio" />
+  <meta property="og:title" content="Kalion Studio" />
+  <meta property="og:description" content="Studio de webdesign indépendant : des sites sur-mesure qui vous démarquent. Site vitrine dès 450 €, ou tout compris dès 250 € puis 28 €/mois. Livré en 5 à 7 jours." />
+  <meta property="og:url" content="%SITE_URL%/" />
+  <meta property="og:image" content="%SITE_URL%/og-image.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Logo Kalion Studio : des sites qui vous démarquent" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Kalion Studio" />
+  <meta name="twitter:description" content="Studio de webdesign indépendant : des sites sur-mesure qui vous démarquent. Livrés en 5 à 7 jours." />
+  <meta name="twitter:image" content="%SITE_URL%/og-image.jpg" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <!-- for search engines: who the studio is and what it offers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "%SITE_URL%/#website",
+        "url": "%SITE_URL%/",
+        "name": "Kalion Studio",
+        "inLanguage": "fr-FR",
+        "publisher": { "@id": "%SITE_URL%/#studio" }
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "%SITE_URL%/#studio",
+        "name": "Kalion Studio",
+        "url": "%SITE_URL%/",
+        "logo": "%SITE_URL%/icon-512.png",
+        "image": "%SITE_URL%/og-image.jpg",
+        "description": "Studio de webdesign indépendant : création de sites vitrines et de projets web sur-mesure, responsive et optimisés pour le référencement.",
+        "email": "k3ntax@gmail.com",
+        "telephone": "+33658234103",
+        "areaServed": { "@type": "Country", "name": "France" },
+        "address": { "@type": "PostalAddress", "addressCountry": "FR" },
+        "priceRange": "€€",
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Création de sites web",
+          "itemListElement": [
+            { "@type": "Offer", "name": "Site vitrine — achat unique", "price": "450", "priceCurrency": "EUR", "description": "Site vitrine sur-mesure jusqu'à 3 pages, livré en 5 à 7 jours." },
+            { "@type": "Offer", "name": "Site vitrine — abonnement tout compris", "price": "250", "priceCurrency": "EUR", "description": "250 € à la commande puis 28 € par mois : hébergement, nom de domaine, modifications illimitées, maintenance." },
+            { "@type": "Offer", "name": "Projet sur-mesure", "description": "Boutique en ligne, espace client, tableau de bord : sur devis, livré en 1 à 3 semaines." }
+          ]
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="preload" href="/fonts/ClashDisplay-600.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- if the site's script can't run, the preloader must not stay forever (public/boot-guard.js) -->
+  <script src="/boot-guard.js" defer></script>
+  <noscript><style>.loader { display: none; } html:not(.lenis) { overflow: auto; }</style></noscript>
+  <!-- the preloader is styled here, before anything else loads: the very first frame is
+       already the logo on ivory (never the raw page). Its counter rolls on the browser's
+       compositor (CSS): nothing the page does while it loads can make it stall
+       (main.js: finishCounter speeds it up to 100 once the site is ready, playIntro opens) -->
+  <style>
+    @font-face { font-family: 'Clash Display'; src: url('/fonts/ClashDisplay-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: block; }
+    html { background: #0c0b0a; }
+    html:not(.lenis) { overflow: hidden; }
+    html.boot-fallback { overflow: auto; }
+    body { margin: 0; background: #0c0b0a; }
+    .loader { position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center; background: #ece6dc; pointer-events: none; }
+    .loader__brand { display: flex; flex-direction: column; align-items: center; gap: clamp(22px, 3.4vh, 40px); }
+    .loader__logo { display: block; width: clamp(240px, 27vw, 500px); height: auto; overflow: visible; }
+    .loader__orb { transform-box: fill-box; transform-origin: 50% 50%; }
+    .loader__count { position: relative; display: flex; color: #100c0a; font: 600 clamp(14px, 0.95vw, 18px) / 1 'Clash Display', Arial, sans-serif; letter-spacing: 0.02em; }
+    .loader__col { display: block; width: 0.76em; height: 1.15em; overflow: hidden; }
+    .loader__col--h { position: absolute; right: 100%; top: 0; }
+    .loader__col, .loader__strip { font-style: normal; font-weight: inherit; }
+    .loader__strip { display: block; will-change: transform; }
+    .loader__strip > span { display: block; height: 1.15em; line-height: 1.15em; text-align: center; }
+    .loader__strip--t { animation: ld-t 5s linear both; }
+    .loader__strip--u { animation: ld-u 5s linear both; }
+    .loader__pct { line-height: 1.15em; margin-left: 0.14em; }
+    @media (max-aspect-ratio: 1/1), (max-width: 760px) { .loader__logo { width: min(64vw, 420px); } .loader__count { font-size: 13px; } }
+    @keyframes ld-t { 0% { transform: translateY(0.00em); animation-timing-function: step-end; } 6.072% { transform: translateY(-1.15em); animation-timing-function: step-end; } 12.431% { transform: translateY(-2.30em); animation-timing-function: step-end; } 19.133% { transform: translateY(-3.45em); animation-timing-function: step-end; } 26.248% { transform: translateY(-4.60em); animation-timing-function: step-end; } 33.88% { transform: translateY(-5.75em); animation-timing-function: step-end; } 42.188% { transform: translateY(-6.90em); animation-timing-function: step-end; } 51.434% { transform: translateY(-8.05em); animation-timing-function: step-end; } 62.129% { transform: translateY(-9.20em); animation-timing-function: step-end; } 75.599% { transform: translateY(-10.35em); animation-timing-function: step-end; } 100% { transform: translateY(-10.35em); } }
+    @keyframes ld-u { 0% { transform: translateY(0); animation-timing-function: steps(10, end); } 6.071% { transform: translateY(-11.50em); } 6.072% { transform: translateY(0); animation-timing-function: steps(10, end); } 12.430% { transform: translateY(-11.50em); } 12.431% { transform: translateY(0); animation-timing-function: steps(10, end); } 19.132% { transform: translateY(-11.50em); } 19.133% { transform: translateY(0); animation-timing-function: steps(10, end); } 26.247% { transform: translateY(-11.50em); } 26.248% { transform: translateY(0); animation-timing-function: steps(10, end); } 33.879% { transform: translateY(-11.50em); } 33.88% { transform: translateY(0); animation-timing-function: steps(10, end); } 42.187% { transform: translateY(-11.50em); } 42.188% { transform: translateY(0); animation-timing-function: steps(10, end); } 51.433% { transform: translateY(-11.50em); } 51.434% { transform: translateY(0); animation-timing-function: steps(10, end); } 62.128% { transform: translateY(-11.50em); } 62.129% { transform: translateY(0); animation-timing-function: steps(10, end); } 75.598% { transform: translateY(-11.50em); } 75.599% { transform: translateY(0); animation-timing-function: steps(9, end); } 100% { transform: translateY(-10.35em); } }
+  </style>
+</head>
+<body>
+
+  <!-- ============ PRELOADER ============ -->
+  <!-- the logo (ink, on ivory) and a counter that rises from 0 to 100 -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader__brand">
+      <svg class="loader__logo" xmlns="http://www.w3.org/2000/svg" viewBox="60 60 1320 430.2" focusable="false"><g transform="translate(44 339.8)"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="#100C0A"/><path d="M881.96 150.4L881.96 150.4Q859.24 150.4 847.48 140.64Q835.72 130.88 835.72 114.88L835.72 114.88L835.72 113.92L847.24 113.92L847.24 116Q847.24 127.84 855.4 133.76Q863.56 139.68 881.96 139.68L881.96 139.68Q913.16 139.68 913.16 121.6L913.16 121.6Q913.16 112.96 907.88 108.8Q902.6 104.64 890.28 102.08L890.28 102.08L867.56 97.76Q853 94.88 844.6 88.32Q836.2 81.76 836.2 69.28L836.2 69.28Q836.2 57.12 847.08 48.56Q857.96 40 879.4 40L879.4 40Q901 40 912.04 49.92Q923.08 59.84 923.08 75.52L923.08 75.52L923.08 76.48L911.56 76.48L911.56 74.56Q911.56 62.72 903.64 56.72Q895.72 50.72 878.6 50.72L878.6 50.72Q847.72 50.72 847.72 68.48L847.72 68.48Q847.72 77.12 852.84 81.04Q857.96 84.96 870.6 87.68L870.6 87.68L893.16 92.16Q924.68 98.24 924.68 120.64L924.68 120.64Q924.68 133.12 913.8 141.76Q902.92 150.4 881.96 150.4M993.48 138.4L993.48 148.8L976.36 148.8Q950.6 148.8 950.6 123.68L950.6 123.68L950.6 79.52L936.52 79.52L936.52 69.76L950.6 69.76L950.6 50.88L962.12 50.88L962.12 69.76L993.48 69.76L993.48 79.52L962.12 79.52L962.12 124.32Q962.12 132.32 966.12 135.36Q970.12 138.4 979.08 138.4L979.08 138.4L993.48 138.4M1044.68 150.4L1044.68 150.4Q1028.52 150.4 1019.8 140.64Q1011.08 130.88 1011.08 116L1011.08 116L1011.08 69.76L1022.44 69.76L1022.44 114.24Q1022.44 140.16 1048.68 140.16L1048.68 140.16Q1063.08 140.16 1070.6 131.84Q1078.12 123.52 1078.12 108.16L1078.12 108.16L1078.12 69.76L1089.48 69.76L1089.48 148.8L1079.24 148.8L1079.24 124.16L1078.44 124.16Q1076.2 135.2 1067.4 142.8Q1058.6 150.4 1044.68 150.4M1148.2 150.4L1148.2 150.4Q1129.64 150.4 1119.24 139.04Q1108.84 127.68 1108.84 109.28Q1108.84 90.88 1119.08 79.52Q1129.32 68.16 1147.24 68.16L1147.24 68.16Q1160.84 68.16 1169.64 74.64Q1178.44 81.12 1181.16 91.84L1181.16 91.84L1181.96 91.84L1181.96 41.6L1193.32 41.6L1193.32 148.8L1182.92 148.8L1182.92 125.44L1182.28 125.44Q1179.4 137.28 1170.36 143.84Q1161.32 150.4 1148.2 150.4M1120.36 109.28L1120.36 109.28Q1120.36 125.6 1128.36 132.8Q1136.36 140 1151.08 140L1151.08 140Q1165.16 140 1173.56 132.24Q1181.96 124.48 1181.96 110.56L1181.96 110.56L1181.96 109.12Q1181.96 94.56 1173.72 86.64Q1165.48 78.72 1150.76 78.72L1150.76 78.72Q1120.36 78.72 1120.36 109.28M1229.32 41.6L1229.32 59.68L1217.96 59.68L1217.96 41.6L1229.32 41.6M1229.32 69.76L1229.32 148.8L1217.96 148.8L1217.96 69.76L1229.32 69.76M1292.68 150.4L1292.68 150.4Q1273.48 150.4 1261.64 138.88Q1249.8 127.36 1249.8 109.28Q1249.8 91.2 1261.64 79.68Q1273.48 68.16 1292.68 68.16L1292.68 68.16Q1312.04 68.16 1323.88 79.68Q1335.72 91.2 1335.72 109.28Q1335.72 127.36 1323.88 138.88Q1312.04 150.4 1292.68 150.4M1268.84 132.08Q1276.68 140.16 1292.68 140.16Q1308.68 140.16 1316.6 132.08Q1324.52 124 1324.52 109.28Q1324.52 94.56 1316.6 86.48Q1308.68 78.4 1292.68 78.4L1292.68 78.4Q1276.84 78.4 1268.92 86.48Q1261 94.56 1261 109.28Q1261 124 1268.84 132.08" fill="#100C0A"/><circle class="loader__orb" cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></g></svg>
+      <div class="loader__count"><i class="loader__col loader__col--h"><b class="loader__strip loader__strip--h"><span></span><span>1</span></b></i><i class="loader__col"><b class="loader__strip loader__strip--t"><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></b></i><i class="loader__col"><b class="loader__strip loader__strip--u"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></b></i><span class="loader__pct">%</span></div>
+    </div>
+  </div>
+
+  <!-- a phone held sideways: the site is made to be held upright -->
+  <div class="rotate" aria-hidden="true">
+    <svg class="rotate__k" viewBox="200 150 708 700" focusable="false"><defs><mask id="rotate-ring" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="white"/><circle cx="406" cy="500" r="84" fill="black"/></mask></defs><path d="M200 150H322V850H200Z" fill="currentColor"/><g mask="url(#rotate-ring)"><path d="M445.74 543.61L877.59 150L702.41 150L366.26 456.39Z" fill="currentColor"/><path d="M366.26 543.61L702.41 850L877.59 850L445.74 456.39Z" fill="currentColor"/></g><circle cx="406" cy="500" r="56" fill="#FF5B24"/></svg>
+    <p>Tournez votre téléphone</p>
+  </div>
+
+  <!-- ============ GLOBAL LAYERS ============ -->
+  <div class="lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <canvas class="gl" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="toast mono" role="status" aria-live="polite"></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav is-hidden">
+    <a class="nav__logo" href="#top" data-scroll aria-label="Kalion Studio, retour en haut">
+      <span class="nav__logo-symbol"><svg class="nav__logo-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="200 150 708 700"><defs><mask id="kalion-ring" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="white"/><circle cx="406" cy="500" r="84" fill="black"/></mask></defs><path d="M200 150H322V850H200Z" fill="currentColor"/><g mask="url(#kalion-ring)"><path d="M445.74 543.61L877.59 150L702.41 150L366.26 456.39Z" fill="currentColor"/><path d="M366.26 543.61L702.41 850L877.59 850L445.74 456.39Z" fill="currentColor"/></g><circle cx="406" cy="500" r="56" fill="#FF5B24"/></svg></span>
+      <span class="nav__logo-word"><svg class="nav__logo-svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="16 -279.8 1156.4 283.8"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="currentColor"/><circle cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></svg></span>
+    </a>
+    <nav class="nav__links" aria-label="Navigation principale">
+      <a href="#apropos" data-scroll class="roll"><span data-text="À propos">À propos</span></a>
+      <a href="#engagements" data-scroll class="roll"><span data-text="Engagements">Engagements</span></a>
+      <a href="#projets" data-scroll class="roll"><span data-text="Projets">Projets</span></a>
+      <a href="#avis" data-scroll class="roll"><span data-text="Avis">Avis</span></a>
+      <a href="#tarifs" data-scroll class="roll"><span data-text="Tarifs">Tarifs</span></a>
+      <a href="#faq" data-scroll class="roll"><span data-text="FAQ">FAQ</span></a>
+    </nav>
+    <div class="nav__right">
+      <a class="btn btn--pill" href="#contact" data-scroll data-magnetic>
+        <span class="btn__label"><span class="d-only">Demander un devis</span><span class="m-only">Devis</span></span>
+        <span class="btn__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg>
+        </span>
+      </a>
+      <!-- phone: the links are in a menu that opens from this button -->
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu"><i></i><i></i></button>
+    </div>
+  </header>
+
+  <!-- ============ MENU (téléphone) : s'ouvre en cercle depuis le bouton ============ -->
+  <div class="menu" id="menu" hidden>
+    <nav class="menu__links" aria-label="Menu">
+      <a href="#apropos" data-menu-link><span class="menu__n mono">01</span><span class="menu__t">À propos</span></a>
+      <a href="#engagements" data-menu-link><span class="menu__n mono">02</span><span class="menu__t">Engagements</span></a>
+      <a href="#projets" data-menu-link><span class="menu__n mono">03</span><span class="menu__t">Projets</span></a>
+      <a href="#avis" data-menu-link><span class="menu__n mono">04</span><span class="menu__t">Avis</span></a>
+      <a href="#tarifs" data-menu-link><span class="menu__n mono">05</span><span class="menu__t">Tarifs</span></a>
+      <a href="#faq" data-menu-link><span class="menu__n mono">06</span><span class="menu__t">FAQ</span></a>
+      <a href="#contact" data-menu-link><span class="menu__n mono">07</span><span class="menu__t">Contact</span></a>
+    </nav>
+    <div class="menu__foot">
+      <a class="btn btn--solid" href="#contact" data-menu-link>
+        <span class="btn__label">Demander un devis</span>
+        <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+      </a>
+      <p class="menu__reach mono"><a href="https://wa.me/33658234103" target="_blank" rel="noopener">WhatsApp</a><a href="mailto:k3ntax@gmail.com">Mail</a><a href="https://t.me/K3nTax" target="_blank" rel="noopener">Telegram</a></p>
+    </div>
+  </div>
+
+  <div class="indicator mono" aria-hidden="true">
+    <span class="indicator__num">00</span>
+    <span class="indicator__line"></span>
+    <span class="indicator__label">Accueil</span>
+  </div>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top" data-tone="dark" data-label="Accueil" data-num="00">
+      <div class="hero__pin">
+        <div class="hero__fallback" aria-hidden="true">Kalion<small>Studio</small></div>
+        <h1 class="sr-only">Kalion Studio, studio de webdesign indépendant basé en France. Des sites qui vous démarquent.</h1>
+        <div class="hero__bottom">
+          <a class="btn btn--ghost" href="#projets" data-scroll data-magnetic>
+            <span class="btn__label">Voir nos projets</span>
+            <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MANIFESTO / À PROPOS ============ -->
+    <section class="about" id="apropos" data-tone="dark" data-label="À propos" data-num="01">
+      <div class="about__pin">
+        <p class="about__text" data-manifesto>
+          Nous sommes <span class="brandword" data-keep><span class="sr-only">Kalion</span><svg class="brandword__svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="16 -279.8 1156.4 283.8"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="currentColor"/><circle cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></svg><span class="brandword__studio">Studio</span></span>, un studio indépendant basé en France, spécialisé dans le <u class="mark mark--under">webdesign<svg class="mark__stroke" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M1.5 9.8C42 6.4 112 4.2 198.6 5.6c1.9 0 2 2.6.1 2.8C121 9.4 62 11.6 3 13.4c-2.4.1-3.4-3.3-1.5-3.6Z"/></svg></u>. Nous créons des sites qui vous <em class="ink">démarquent.</em>
+        </p>
+        <p class="about__sub" data-manifesto>
+          Pas de <s class="mark mark--strike"><span class="mark__txt">template recyclé</span><svg class="mark__stroke" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M1.4 10.6C52 8.8 128 5.6 198.4 3.4c1.9-.1 2.2 2.6.3 2.9C130 9 62 12.6 3 14.2c-2.4.1-3.5-3.4-1.6-3.6Z"/></svg></s>, un design <em>travaillé</em> qui plaît à vos visiteurs, à Google et à vous.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ ENGAGEMENTS — voyage à travers quatre gouttes de verre (src/gl/JourneyScene.js) ============ -->
+    <section class="pillars" id="engagements" data-tone="dark" data-label="Engagements" data-num="02">
+      <div class="pillars__pin">
+        <canvas class="pillars__gl" aria-hidden="true"></canvas>
+        <div class="pillars__ui">
+          <h2 class="pillars__title">Ce que vous <em>obtenez.</em></h2>
+
+          <ol class="vows">
+            <li class="vow" data-main="100" data-suffix="%" data-caption="sur-mesure">
+              <p class="sr-only">100 % sur-mesure.</p>
+              <h3 class="vow__title"><span class="vow__mask"><span>Site <em>unique</em></span></span></h3>
+              <p class="vow__text">Pas de template Wix ou Shopify recyclé. Un design pensé pour votre marque, qui vous démarque de la concurrence.</p>
+            </li>
+            <li class="vow" data-main="5–7" data-suffix="" data-caption="jours pour un site vitrine">
+              <p class="sr-only">5 à 7 jours pour un site vitrine.</p>
+              <h3 class="vow__title"><span class="vow__mask"><span>Livré <em>vite</em></span></span></h3>
+              <p class="vow__text">De 5 à 7 jours pour un site vitrine à 1-3 semaines pour un site complexe. Vous voyez votre projet avancer chaque jour.</p>
+            </li>
+            <li class="vow" data-main="0" data-suffix="€" data-caption="de frais caché">
+              <p class="sr-only">0 € de frais caché.</p>
+              <h3 class="vow__title"><span class="vow__mask"><span>Prix <em>fixe</em></span></span></h3>
+              <p class="vow__text">Le prix annoncé au devis est le prix final. Aucun frais caché, aucun dépassement, aucune mauvaise surprise.</p>
+            </li>
+            <li class="vow" data-main="3" data-suffix="écrans" data-caption="mobile · tablette · ordinateur">
+              <p class="sr-only">Un site parfait sur 3 écrans : mobile, tablette et ordinateur.</p>
+              <h3 class="vow__title"><span class="vow__mask"><span>100 %<br /><em>responsive</em></span></span></h3>
+              <p class="vow__text">Votre site s'affiche parfaitement sur mobile, tablette et ordinateur. Rapide et bien référencé, il plaît à Google et transforme vos visiteurs en clients.</p>
+            </li>
+          </ol>
+
+          <nav class="pillars__rail mono" aria-label="Nos engagements">
+            <span class="pillars__rail-track" aria-hidden="true"><i class="pillars__rail-fill"></i></span>
+            <button type="button" data-go="0"><span>01</span>Site unique</button>
+            <button type="button" data-go="1"><span>02</span>Livré vite</button>
+            <button type="button" data-go="2"><span>03</span>Prix fixe</button>
+            <button type="button" data-go="3"><span>04</span>Responsive</button>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJETS ============
+         Le bandeau monte par-dessus la fin du voyage, une encre liquide l'avale,
+         « Projets réalisés » sort de l'encre en 3D (src/gl/ProjectsTitle.js) puis se brise
+         quand on passe au travers, et la galerie des 4 projets arrive. -->
+    <section class="projects" id="projets" data-tone="auto" data-label="Projets" data-num="03">
+      <div class="projects__pin">
+        <canvas class="projects__gl" aria-hidden="true"></canvas>
+
+        <div class="pband" aria-hidden="true">
+          <div class="pband__row" data-dir="-1">
+            <div class="pband__track">
+              <span>Sites vitrines</span><i>✦</i><span class="o">E-commerce</span><i>✦</i><span>Landing pages</span><i>✦</i><span class="o">Web apps</span><i>✦</i>
+            </div>
+          </div>
+          <div class="pband__row" data-dir="1">
+            <div class="pband__track">
+              <span class="o">Projets</span><i>✦</i><span>Créations</span><i>✦</i><span class="o">Sites web</span><i>✦</i><span>Design</span><i>✦</i><span class="o">Développement</span><i>✦</i>
+            </div>
+          </div>
+        </div>
+
+        <div class="projects__intro">
+          <h2 class="projects__word">Projets <em>réalisés</em></h2>
+        </div>
+
+        <div class="projects__stage">
+          <div class="projects__track">
+
+            <a class="pcard" href="https://k3ntax.com/" target="_blank" rel="noopener">
+              <div class="pcard__media">
+                <img src="/img/projects/k3ntax.webp" alt="Site portfolio K3nTax.com" />
+                <span class="pcard__go mono">Voir le site ↗</span>
+              </div>
+              <div class="pcard__info">
+                <span class="pcard__idx mono">01</span>
+                <div class="pcard__main">
+                  <h3 class="pcard__title">K3nTax<span class="pcard__tld">.com</span></h3>
+                  <p class="pcard__desc">Portfolio de montage vidéo avec une identité visuelle forte. Design sur-mesure et présentation soignée des réalisations pour une présence en ligne impactante.</p>
+                </div>
+                <ul class="pcard__tags mono"><li>Portfolio</li><li>Branding</li><li>UI/UX</li></ul>
+              </div>
+            </a>
+
+            <a class="pcard" href="https://www.the328project.com/" target="_blank" rel="noopener">
+              <div class="pcard__media">
+                <img src="/img/projects/the328.webp" alt="Site vitrine The 328 Project" />
+                <span class="pcard__go mono">Voir le site ↗</span>
+              </div>
+              <div class="pcard__info">
+                <span class="pcard__idx mono">02</span>
+                <div class="pcard__main">
+                  <h3 class="pcard__title">The 328 Project<span class="pcard__tld">.com</span></h3>
+                  <p class="pcard__desc">Location d'une Ferrari 328 GTS dans les Bouches-du-Rhône pour mariages, cinéma et shootings. Site vitrine élégant mettant en valeur ce véhicule d'exception.</p>
+                </div>
+                <ul class="pcard__tags mono"><li>Vitrine</li><li>Automobile</li><li>Location</li><li>Événementiel</li></ul>
+              </div>
+            </a>
+
+            <a class="pcard" href="https://by-esperelles.com/" target="_blank" rel="noopener">
+              <div class="pcard__media">
+                <img src="/img/projects/esperelles.webp" alt="Boutique en ligne By Esperelles" />
+                <span class="pcard__go mono">Voir le site ↗</span>
+              </div>
+              <div class="pcard__info">
+                <span class="pcard__idx mono">03</span>
+                <div class="pcard__main">
+                  <h3 class="pcard__title">By Esperelles<span class="pcard__tld">.com</span></h3>
+                  <p class="pcard__desc">Boutique e-commerce de bijoux artisanaux d'une créatrice. Dashboard complet pour tout gérer : produits, contenus, paiements sécurisés, livraisons et avis clients.</p>
+                </div>
+                <ul class="pcard__tags mono"><li>E-commerce</li><li>Bijoux</li><li>Paiement</li><li>Dashboard</li></ul>
+              </div>
+            </a>
+
+            <a class="pcard" href="https://www.distrib-sud.com/" target="_blank" rel="noopener">
+              <div class="pcard__media">
+                <img src="/img/projects/distribsud.webp" alt="Site e-commerce Distrib-Sud" />
+                <span class="pcard__go mono">Voir le site ↗</span>
+              </div>
+              <div class="pcard__info">
+                <span class="pcard__idx mono">04</span>
+                <div class="pcard__main">
+                  <h3 class="pcard__title">Distrib-Sud<span class="pcard__tld">.com</span></h3>
+                  <p class="pcard__desc">Site e-commerce dédié à la vente de distributeurs. Catalogue produits clair, parcours d'achat fluide et design moderne adapté au secteur professionnel.</p>
+                </div>
+                <ul class="pcard__tags mono"><li>E-commerce</li><li>Vente</li><li>Web</li><li>Catalogue</li></ul>
+              </div>
+            </a>
+
+            <button class="pcard pcard--more" type="button" aria-haspopup="dialog" aria-controls="more">
+              <div class="pcard__media">
+                <div class="more-fan" aria-hidden="true">
+                  <img src="/img/projects/appart108.webp" alt="" style="--k: -2.5" />
+                  <img src="/img/projects/cleansignatures.webp" alt="" style="--k: -1.5" />
+                  <img src="/img/projects/hyperion.webp" alt="" style="--k: -0.5" />
+                  <img src="/img/projects/altys.webp" alt="" style="--k: 0.5" />
+                  <img src="/img/projects/batireno.webp" alt="" style="--k: 1.5" />
+                  <img src="/img/projects/cryptohub.webp" alt="" style="--k: 2.5" />
+                </div>
+                <span class="more-fan__count" aria-hidden="true">+6</span>
+              </div>
+              <div class="pcard__info">
+                <span class="pcard__idx mono">+06</span>
+                <div class="pcard__main">
+                  <h3 class="pcard__title">Découvrir <em>plus</em></h3>
+                  <p class="pcard__desc">Six autres sites livrés : immobilier, logiciel, nettoyage, rénovation, cryptomonnaies…</p>
+                </div>
+                <span class="pcard__open mono">Ouvrir ↗</span>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+        <div class="projects__hud mono">
+          <div class="projects__hud-count"><span data-pcount>01</span><em>/ 04</em></div>
+          <div class="projects__hud-bar"><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ AVIS : sept bulles remontent du fond et fusionnent en une sphère
+         de verre ; les avis s'en échappent sur deux rangées qui dérivent
+         (src/gl/ReviewsScene.js · initReviews) ============ -->
+    <section class="reviews" id="avis" data-tone="dark" data-tone-start="top -45%" data-label="Avis" data-num="04">
+      <div class="reviews__pin">
+        <canvas class="reviews__gl" aria-hidden="true"></canvas>
+
+        <header class="rv-head">
+          <h2 class="rv-title">Ils nous ont fait <em>confiance.</em></h2>
+          <p class="rv-score">
+            <span class="rv-score__num">5,0</span>
+            <span class="rv-score__stars" aria-label="Note moyenne : 5 étoiles sur 5">★★★★★</span>
+            <span class="mono">7 avis clients</span>
+          </p>
+        </header>
+
+        <!-- the texts of the rows (read by initReviewsGL), shown as a list without WebGL -->
+        <ol class="rv-list">
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Je délègue la création de sites à Quentin depuis 2 mois pour mes clients. Délais toujours respectés, identité visuelle prise en compte. Un plaisir de travailler avec lui, je le recommande.</blockquote>
+            <p class="rv__who"><strong>Nolan Media</strong></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Quentin a transformé notre ancien site en une vitrine moderne, fluide et professionnelle. Malgré la complexité, le résultat est clair et soigné. Très satisfaits, on le recommande sans hésiter.</blockquote>
+            <p class="rv__who"><strong>Hyperion Software</strong><span class="mono">SaaS</span></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Site livré dans les délais, design pro et parfaitement responsive. Les demandes de devis tombent de plus en plus : une vraie vitrine professionnelle.</blockquote>
+            <p class="rv__who"><strong>Distrib-Sud</strong><span class="mono">E-commerce</span></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Notre plateforme a été 100 % développée par Quentin. Il a su intégrer des éléments très techniques propres à la crypto et livrer un site incroyable. Je le recommande.</blockquote>
+            <p class="rv__who"><strong>Crypto-Hub</strong><span class="mono">Fondateur</span></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Merci Quentin pour ton site internet. J'en avais déjà un, mais tu l'as rendu beaucoup plus attractif, ce qui va m'apporter énormément de clients.</blockquote>
+            <p class="rv__who"><strong>Clean Signatures</strong><span class="mono">Automobile</span></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Le site immobilier est élégant et fluide. Mes biens sont mis en valeur, les visites explosent depuis le lancement.</blockquote>
+            <p class="rv__who"><strong>Appart108</strong><span class="mono">Agent immobilier</span></p>
+          </li>
+          <li class="rv">
+            <span class="rv__stars" aria-hidden="true">★★★★★</span>
+            <blockquote>Merci Quentin pour le travail réalisé. Le site me convient parfaitement, il reprend exactement ce dont j'avais besoin avec l'identité visuelle souhaitée.</blockquote>
+            <p class="rv__who"><strong>Altys Propreté</strong><span class="mono">Nettoyage</span></p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ TARIFS : on remonte à la surface ; ce qui est inclus remplit une goutte
+         de verre, couche après couche ; puis elle se divise, question après question
+         (src/gl/DropsScene.js — même verre liquide que le hero) ============ -->
+    <section class="pricing" id="tarifs" data-tone="dark" data-tone-start="top -30%" data-label="Tarifs" data-num="05">
+      <div class="pricing__pin">
+        <canvas class="pricing__gl" aria-hidden="true"></canvas>
+        <div class="pricing__ui">
+          <header class="pr-head">
+            <h2 class="pr-title">Nos <em>tarifs.</em></h2>
+            <p class="pr-lead">Deux questions, deux réponses. C'est tout.</p>
+          </header>
+
+          <p class="pr-q mono" data-step="1"><span>Question 1</span><i></i><span>Quel type de projet&nbsp;?</span></p>
+          <p class="pr-q mono" data-step="2"><span>Question 2</span><i></i><span>Comment payer votre site vitrine&nbsp;?</span></p>
+
+          <!-- inclus : quatre gouttelettes versées dans la grande, une couche chacune -->
+          <div class="pr-core" data-drop="core">
+            <span class="mono">Dans tous nos sites</span>
+            <strong>Tout ceci est <em>inclus.</em></strong>
+          </div>
+          <ul class="pr-inc" aria-label="Inclus dans tous nos sites">
+            <li data-drop="s0"><span class="pr-inc__n mono">01</span><span class="pr-inc__t">Design 100 % sur-mesure</span></li>
+            <li data-drop="s1"><span class="pr-inc__n mono">02</span><span class="pr-inc__t">Responsive mobile</span></li>
+            <li data-drop="s2"><span class="pr-inc__n mono">03</span><span class="pr-inc__t">Optimisation SEO</span></li>
+            <li data-drop="s3"><span class="pr-inc__n mono">04</span><span class="pr-inc__t">Formation à la prise en main</span></li>
+          </ul>
+
+          <!-- question 1 -->
+          <article class="pr-offer" data-drop="vitrine" data-step="1">
+            <div class="pr-in">
+              <span class="pr-name mono">Site vitrine</span>
+              <span class="pr-price"><small>à partir de</small>450&nbsp;€</span>
+              <span class="pr-badge mono">Livré en 5 à 7 jours</span>
+            </div>
+            <div class="pr-out">
+              <ul class="pr-dots">
+                <li>Présenter votre activité et vos services</li>
+                <li>Être trouvé sur Google</li>
+                <li>Jusqu'à 3 pages · page supplémentaire 150 €</li>
+              </ul>
+              <a class="btn btn--solid" href="#contact" data-scroll data-project="Site vitrine">
+                <span class="btn__label">Choisir<span class="d-only"> cette formule</span></span>
+                <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+              </a>
+            </div>
+          </article>
+          <article class="pr-offer" data-drop="mesure" data-step="1">
+            <div class="pr-in">
+              <span class="pr-name mono">Projet sur-mesure</span>
+              <span class="pr-price">Sur devis</span>
+              <span class="pr-badge mono">1 à 3 semaines</span>
+            </div>
+            <div class="pr-out">
+              <ul class="pr-dots">
+                <li>Boutique en ligne / paiement</li>
+                <li>Espace client et authentification</li>
+                <li>Dashboard d'administration · IA intégrée</li>
+              </ul>
+              <a class="btn btn--ghost" href="#contact" data-scroll data-project="Site complexe">
+                <span class="btn__label"><span class="d-only">Parlons de votre projet</span><span class="m-only">En parler</span></span>
+                <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+              </a>
+            </div>
+          </article>
+
+          <!-- question 2 -->
+          <article class="pr-offer" data-drop="once" data-step="2">
+            <div class="pr-in">
+              <span class="pr-name mono">Achat unique</span>
+              <span class="pr-price">450&nbsp;€</span>
+              <span class="pr-badge mono">Une seule fois</span>
+            </div>
+            <div class="pr-out">
+              <ul class="pr-list">
+                <li class="is-off"><span>Hébergement</span><span>À votre charge · ~60 €/an</span></li>
+                <li class="is-off"><span>Nom de domaine</span><span>À votre charge · ~15 €/an</span></li>
+                <li class="is-off"><span>Modifications</span><span>40 € l'unité</span></li>
+                <li class="is-off"><span>Maintenance et support</span><span>2 semaines</span></li>
+                <li class="is-off"><span>Mises à jour de sécurité</span><span>Non incluses</span></li>
+                <li><span>Engagement</span><span>Aucun</span></li>
+              </ul>
+              <a class="btn btn--ghost" href="#contact" data-scroll data-project="Site vitrine">
+                <span class="btn__label">Choisir<span class="d-only"> cette formule</span></span>
+                <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+              </a>
+            </div>
+          </article>
+          <article class="pr-offer pr-offer--hl" data-drop="sub" data-step="2">
+            <div class="pr-in">
+              <span class="pr-name mono">Abonnement · tout compris</span>
+              <span class="pr-price">250&nbsp;€</span>
+              <span class="pr-badge mono">puis 28&nbsp;€/mois</span>
+            </div>
+            <div class="pr-out">
+              <ul class="pr-list">
+                <li><span>Hébergement</span><span><i class="check"></i>Inclus</span></li>
+                <li><span>Nom de domaine</span><span><i class="check"></i>Offert</span></li>
+                <li><span>Modifications</span><span><i class="check"></i>Illimitées</span></li>
+                <li><span>Maintenance et support</span><span><i class="check"></i>En continu</span></li>
+                <li><span>Mises à jour de sécurité</span><span><i class="check"></i>Incluses</span></li>
+                <li><span>Engagement</span><span>6 mois minimum</span></li>
+              </ul>
+              <a class="btn btn--solid" href="#contact" data-scroll data-project="Site vitrine">
+                <span class="btn__label">Choisir<span class="d-only"> cette formule</span></span>
+                <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
+              </a>
+            </div>
+          </article>
+          <a class="pr-mini" data-drop="mini" data-step="2" href="#contact" data-scroll data-project="Site complexe">
+            <span class="mono">Sur-mesure</span><strong>Sur devis ↗</strong>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ : une goutte coule le long des questions ============ -->
+    <section class="faq" id="faq" data-tone="dark" data-label="FAQ" data-num="06">
+      <div class="faq__aside">
+        <h2 class="faq__title">Les questions qu'on nous <em>pose.</em></h2>
+        <p class="faq__more">Une autre question ? <a href="#contact" data-scroll>Écrivez-nous ↗</a></p>
+      </div>
+      <div class="faq__list">
+        <span class="faq__drip" aria-hidden="true"><i class="faq__drip-line"></i><i class="faq__drip-drop"></i></span>
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false"><span class="faq__num mono">01</span><span class="faq__label">Que devient mon site si j'arrête l'abonnement ?</span><span class="faq__icon" aria-hidden="true"></span></button>
+          <div class="faq__a"><div class="faq__a-in"><p>Le site est mis hors ligne à la fin du mois en cours. Vous pouvez à tout moment basculer vers l'achat unique en réglant le solde de 200 € : le site devient alors définitivement le vôtre et nous vous transférons l'ensemble des fichiers.</p></div></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false"><span class="faq__num mono">02</span><span class="faq__label">Qui est propriétaire du site ?</span><span class="faq__icon" aria-hidden="true"></span></button>
+          <div class="faq__a"><div class="faq__a-in"><p>En achat unique, vous êtes propriétaire du site et de son code dès le paiement final : nom de domaine, contenus et fichiers vous appartiennent. En abonnement, vous êtes propriétaire de vos contenus et de votre nom de domaine, et nous restons responsables de l'hébergement et du code tant que l'abonnement est actif.</p></div></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false"><span class="faq__num mono">03</span><span class="faq__label">Qu'est-ce qui compte comme une modification ?</span><span class="faq__icon" aria-hidden="true"></span></button>
+          <div class="faq__a"><div class="faq__a-in"><p>Inclus : changer un texte, remplacer une photo, mettre à jour un tarif, ajouter un témoignage, modifier vos horaires ou vos coordonnées, corriger un lien. Non inclus : la création d'une nouvelle page (150 €), une refonte graphique complète, ou l'ajout d'une fonctionnalité technique (paiement, espace client, réservation) qui fait l'objet d'un devis à part.</p></div></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false"><span class="faq__num mono">04</span><span class="faq__label">Combien de temps pour livrer mon site ?</span><span class="faq__icon" aria-hidden="true"></span></button>
+          <div class="faq__a"><div class="faq__a-in"><p>5 à 7 jours pour un site vitrine, 1 à 3 semaines pour un projet sur-mesure.</p></div></div>
+        </div>
+        <div class="faq__item">
+          <button class="faq__q" type="button" aria-expanded="false"><span class="faq__num mono">05</span><span class="faq__label">Puis-je passer d'une formule à l'autre ?</span><span class="faq__icon" aria-hidden="true"></span></button>
+          <div class="faq__a"><div class="faq__a-in"><p>Oui. À tout moment vous pouvez passer de l'abonnement à l'achat unique en réglant le solde de 200 €. L'inverse est également possible : nous reprenons alors la gestion technique de votre site existant dans le cadre de l'abonnement.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT : « Parlons » et « ensemble. » se rejoignent, la goutte de la FAQ
+         devient le point ; puis la lettre (le formulaire) arrive pliée et se déplie ============ -->
+    <section class="contact" id="contact" data-tone="dark" data-label="Contact" data-num="07">
+      <div class="contact__pin">
+        <h2 class="contact__title" aria-label="Parlons ensemble.">
+          <span class="ct-word ct-word--a" aria-hidden="true">Parlons</span>
+          <span class="ct-word ct-word--b" aria-hidden="true"><em>ensemble</em><span class="ct-dot">.</span></span>
+        </h2>
+
+        <div class="contact__side">
+          <p class="contact__lead"><strong>Pas sûr de votre choix ?</strong> Décrivez-nous votre projet : nous vous disons en 24h ce qui vous convient le mieux.</p>
+          <div class="contact__channels">
+            <a class="channel" href="https://wa.me/33658234103" target="_blank" rel="noopener">
+              <span class="channel__name">WhatsApp</span><span class="channel__value mono">06 58 23 41 03</span><span class="channel__arrow" aria-hidden="true">↗</span>
+            </a>
+            <a class="channel" href="mailto:k3ntax@gmail.com">
+              <span class="channel__name">Mail</span><span class="channel__value mono">k3ntax@gmail.com</span><span class="channel__arrow" aria-hidden="true">↗</span>
+            </a>
+            <button class="channel" type="button" data-copy="k3ntax">
+              <span class="channel__name">Discord</span><span class="channel__value mono">k3ntax</span><span class="channel__arrow" aria-hidden="true">⧉</span>
+            </button>
+            <a class="channel" href="https://t.me/K3nTax" target="_blank" rel="noopener">
+              <span class="channel__name">Telegram</span><span class="channel__value mono">@K3nTax</span><span class="channel__arrow" aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="letter">
+          <form class="form" novalidate>
+            <div class="fold fold--1">
+              <div class="fold__face">
+                <div class="form__row">
+                  <label class="field">
+                    <span class="field__label mono">Prénom / Nom</span>
+                    <input type="text" name="name" placeholder="Votre nom" autocomplete="name" required />
+                  </label>
+                  <label class="field">
+                    <span class="field__label mono">Email</span>
+                    <input type="email" name="email" placeholder="votre@email.com" autocomplete="email" required />
+                  </label>
+                </div>
+              </div>
+              <div class="fold__back" aria-hidden="true"><span class="letter__logo" role="img" aria-label="Kalion Studio"><svg class="letter__symbol" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="200 150 708 700"><defs><mask id="kalion-ring-letter" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="white"/><circle cx="406" cy="500" r="84" fill="black"/></mask></defs><path d="M200 150H322V850H200Z" fill="currentColor"/><g mask="url(#kalion-ring-letter)"><path d="M445.74 543.61L877.59 150L702.41 150L366.26 456.39Z" fill="currentColor"/><path d="M366.26 543.61L702.41 850L877.59 850L445.74 456.39Z" fill="currentColor"/></g><circle cx="406" cy="500" r="56" fill="#FF5B24"/></svg><span class="letter__word"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="16 -279.8 1156.4 283.8"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="currentColor"/><circle cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></svg><span>Studio</span></span></span><i class="letter__seal"></i></div>
+            </div>
+            <div class="fold fold--2">
+              <div class="fold__face">
+                <fieldset class="field">
+                  <legend class="field__label mono">Type de projet</legend>
+                  <div class="chips" data-group="type">
+                    <span class="chips__blob" aria-hidden="true"></span>
+                    <label><input type="radio" name="type" value="Site vitrine" checked /><span>Site vitrine</span></label>
+                    <label><input type="radio" name="type" value="Site complexe" /><span>Site complexe</span></label>
+                    <label><input type="radio" name="type" value="E-commerce" /><span>E-commerce</span></label>
+                    <label><input type="radio" name="type" value="Refonte de site" /><span>Refonte de site</span></label>
+                    <label><input type="radio" name="type" value="Autre" /><span>Autre</span></label>
+                  </div>
+                </fieldset>
+                <fieldset class="field">
+                  <legend class="field__label mono">Budget approximatif</legend>
+                  <div class="chips" data-group="budget">
+                    <span class="chips__blob" aria-hidden="true"></span>
+                    <label><input type="radio" name="budget" value="Moins de 450 €" /><span>Moins de 450 €</span></label>
+                    <label><input type="radio" name="budget" value="450 € - 3 000 €" checked /><span>450 € – 3 000 €</span></label>
+                    <label><input type="radio" name="budget" value="3 000 € - 5 000 €" /><span>3 000 € – 5 000 €</span></label>
+                    <label><input type="radio" name="budget" value="Plus de 5 000 €" /><span>Plus de 5 000 €</span></label>
+                    <label><input type="radio" name="budget" value="Je ne sais pas encore" /><span>Je ne sais pas encore</span></label>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+            <div class="fold fold--3">
+              <div class="fold__face">
+                <label class="field">
+                  <span class="field__label mono">Parlez-nous de votre projet</span>
+                  <textarea name="message" rows="3" placeholder="Quelques lignes suffisent : votre activité, ce que vous voulez, vos délais…" required></textarea>
+                </label>
+                <div class="form__foot">
+                  <span class="form__status mono"><i class="dot"></i>Disponible · Réponse&nbsp;sous&nbsp;24h</span>
+                  <button class="send" type="submit">
+                    <span class="send__fill" aria-hidden="true">
+                      <svg class="send__wave" viewBox="0 0 400 24" preserveAspectRatio="none"><path d="M0 12 Q 50 0 100 12 T 200 12 T 300 12 T 400 12 V 24 H 0 Z" /></svg>
+                    </span>
+                    <span class="send__label">Envoyer ma demande</span>
+                    <span class="send__pct mono" aria-hidden="true">0 %</span>
+                  </button>
+                </div>
+              </div>
+              <div class="fold__back" aria-hidden="true"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer" data-tone="dark" data-label="Merci" data-num="08">
+    <div class="footer__top">
+      <div class="footer__cta">
+        <span class="mono">Un projet en tête ?</span>
+        <a href="#contact" data-scroll class="footer__big">Demander un devis <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="footer__cols">
+        <div class="footer__col">
+          <span class="mono">Navigation</span>
+          <a href="#apropos" data-scroll>À propos</a>
+          <a href="#engagements" data-scroll>Engagements</a>
+          <a href="#projets" data-scroll>Projets</a>
+          <a href="#avis" data-scroll>Avis</a>
+          <a href="#tarifs" data-scroll>Tarifs</a>
+          <a href="#faq" data-scroll>FAQ</a>
+        </div>
+        <div class="footer__col">
+          <span class="mono">Nous contacter</span>
+          <a href="https://wa.me/33658234103" target="_blank" rel="noopener">Téléphone</a>
+          <a href="mailto:k3ntax@gmail.com">Gmail</a>
+          <button type="button" data-copy="k3ntax">Discord</button>
+          <a href="https://t.me/K3nTax" target="_blank" rel="noopener">Telegram</a>
+        </div>
+        <div class="footer__col">
+          <span class="mono">Informations</span>
+          <a href="/mentions-legales/">Mentions légales</a>
+          <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
+          <a href="/cgv/">CGV</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__fallback" aria-hidden="true">Kalion Studio</div>
+
+    <div class="footer__bottom mono">
+      <span>© 2026 Kalion Studio</span>
+      <a href="#top" data-scroll class="footer__up">Retour en haut ↑</a>
+    </div>
+  </footer>
+
+  <!-- ============ PLUS DE PROJETS : panneau ouvert par la carte « Découvrir plus » ============ -->
+  <!-- la goutte qui tombe de la FAQ et devient le point de « ensemble. » -->
+  <i class="fly-drop" aria-hidden="true"></i>
+
+  <div class="more-lip" aria-hidden="true"></div>
+  <div class="more-morph mono" aria-hidden="true"><span class="more-morph__a">Ouvrir ↗</span><span class="more-morph__b">Fermer <b>✕</b></span></div>
+  <div class="more" id="more" role="dialog" aria-modal="true" aria-labelledby="more-title" hidden data-lenis-prevent>
+    <div class="more__inner">
+      <header class="more__head">
+        <h2 class="more__title" id="more-title">Nos autres <em>réalisations.</em></h2>
+        <button class="more__close mono" type="button">Fermer <span aria-hidden="true">✕</span></button>
+      </header>
+
+      <ul class="more__grid">
+        <li>
+          <a class="mtile" href="https://appart108.fr/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/appart108.webp" alt="Site immobilier Appart108" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">05</span>
+              <div>
+                <h3 class="mtile__title">Appart108<span class="pcard__tld">.fr</span></h3>
+                <p class="mtile__desc">Site de vente immobilière élégant et fonctionnel. Présentation soignée des biens, navigation intuitive et expérience utilisateur premium.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a class="mtile" href="https://cleansignatures.com/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/cleansignatures.webp" alt="Site Clean Signatures" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">06</span>
+              <div>
+                <h3 class="mtile__title">Clean Signatures<span class="pcard__tld">.com</span></h3>
+                <p class="mtile__desc">Site pour une société spécialisée dans le nettoyage automobile. Design premium, présentation des services et expérience utilisateur soignée.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a class="mtile" href="https://hyperion-software.lovable.app/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/hyperion.webp" alt="Site Hyperion Software" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">07</span>
+              <div>
+                <h3 class="mtile__title">Hyperion<span class="pcard__tld">Software</span></h3>
+                <p class="mtile__desc">Solution logicielle innovante avec une interface épurée et moderne. Expérience utilisateur fluide et performances optimisées.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a class="mtile" href="https://altysproprete.com/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/altys.webp" alt="Site vitrine Altys Propreté" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">08</span>
+              <div>
+                <h3 class="mtile__title">Altys Propreté<span class="pcard__tld">.com</span></h3>
+                <p class="mtile__desc">Site vitrine pour une société de nettoyage de maisons et de jardins. Présentation claire des prestations et prise de contact simplifiée.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a class="mtile" href="https://batirenoisolation.com/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/batireno.webp" alt="Landing page Bâtireno Isolation" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">09</span>
+              <div>
+                <h3 class="mtile__title">Bâtireno Isolation<span class="pcard__tld">.com</span></h3>
+                <p class="mtile__desc">Landing page pour une entreprise de rénovation intérieure et d'isolation en Île-de-France. Présentation claire des services et génération de demandes de devis.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a class="mtile" href="https://crypto-hub.fr/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/cryptohub.webp" alt="Plateforme Crypto-Hub" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__info">
+              <span class="mtile__idx mono">10</span>
+              <div>
+                <h3 class="mtile__title">Crypto-Hub<span class="pcard__tld">.fr</span></h3>
+                <p class="mtile__desc">Plateforme complète dédiée à l'univers des cryptomonnaies. Interface moderne, données en temps réel et expérience utilisateur optimisée.</p>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <a class="more__cta" href="#contact">
+        <span class="more__cta-kicker mono">Nouveau projet — bientôt disponible</span>
+        <strong>Le vôtre&nbsp;<em>?</em></strong>
+        <span class="more__cta-link mono">Un projet en tête ? Contactez-nous ↗</span>
+      </a>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
