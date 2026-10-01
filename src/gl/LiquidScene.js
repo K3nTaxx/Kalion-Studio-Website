@@ -426,7 +426,7 @@ export class LiquidScene {
 
   /* ---------------- text field texture ---------------- */
   drawText() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = this.renderer.getPixelRatio(); // (the resolution it renders at: min(screen, 1.5))
     const W = Math.min(2048, Math.max(640, Math.round(this.width * dpr)));
     const H = Math.max(360, Math.round(W / this.aspect));
     const c = this.textCanvas;

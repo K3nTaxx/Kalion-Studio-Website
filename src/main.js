@@ -131,7 +131,9 @@ const onRealResize = (fn) => realResizeFns.push(fn);
 
 // WebGL resolution: capped (the shaders are heavy). On phones and tablets a governor
 // watches the frame rate and lowers it (then raises it again) so that nothing stutters.
-const glDpr = (max, mobileMax = max) => Math.min(window.devicePixelRatio || 1, MOBILE ? mobileMax : max);
+// (dev only: ?dpr=3 renders the scenes at full resolution, for the social visuals)
+const DEV_DPR = import.meta.env.DEV ? +new URLSearchParams(location.search).get('dpr') : 0;
+const glDpr = (max, mobileMax = max) => DEV_DPR || Math.min(window.devicePixelRatio || 1, MOBILE ? mobileMax : max);
 const glScenes = []; // { scene, max, min }: scene.setPixelRatio(pr)
 const quality = { scale: 1 };
 function applyQuality(scale) {
@@ -555,10 +557,16 @@ const WORD_FONT = { family: 'Clash Display', weight: 600, width: 0.66 };
 async function initGL() {
   try {
     // (on a phone the word takes most of the width)
-    const font = MOBILE ? { ...WORD_FONT, width: 0.8 } : WORD_FONT;
+    let font = MOBILE ? { ...WORD_FONT, width: 0.8 } : WORD_FONT;
+    // dev only: ?wordw=0.86&wordy=0.02 (width and height of the word, for the social visuals)
+    const devQ = import.meta.env.DEV ? new URLSearchParams(location.search) : null;
+    if (devQ && devQ.get('wordw')) font = { ...font, width: +devQ.get('wordw') };
     await document.fonts.load(`${font.weight} 120px "${font.family}"`);
     gl = new LiquidScene(canvas, font, { mobile: MOBILE, dpr: glDpr(1.5, 1.5) });
     if (MOBILE) Object.assign(gl.layout, { hero: 0.03, footer: -0.25, footerScale: 0.94 });
+    if (devQ && devQ.get('wordy')) gl.layout.hero = +devQ.get('wordy');
+    if (import.meta.env.DEV) window.__gl = gl; // dev only: the visuals place its droplets
+    if (devQ && devQ.get('bevel')) gl.uniforms.uBevel.value = +devQ.get('bevel');
     glScenes.push({ scene: gl, max: glDpr(1.5, 1.5), min: 0.8 });
     await gl.warmup();
     gsap.ticker.add(() => gl.render());
