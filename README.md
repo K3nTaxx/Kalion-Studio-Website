@@ -17,7 +17,7 @@ En local, `?fast` à la fin de l'URL (par exemple `http://localhost:5173/?fast`)
 
 1. Sur Netlify : *Add new site → Import an existing project → GitHub*, choisir ce dépôt.
 2. Rien à régler : `netlify.toml` donne la commande (`npm run build`), le dossier publié (`dist`), la version de Node, les en-têtes de sécurité et le cache.
-3. Domaine : *Domain management → Add a domain*. L'adresse du site (balise canonical, image de partage, `sitemap.xml`, `robots.txt`) est écrite au moment du build à partir de la variable `URL` que Netlify fournit : après avoir branché le domaine, relancer un déploiement (*Deploys → Trigger deploy*) pour qu'elle soit à jour. On peut aussi la forcer avec une variable d'environnement `SITE_URL`.
+3. Domaine : **www.kalionstudio.com** (acheté chez IONOS, DNS restés chez IONOS : enregistrement A `@` → `75.2.60.5`, CNAME `www` → `kalionstudio.netlify.app`, pas d'AAAA). Le HTTPS (Let's Encrypt) est fourni et renouvelé par Netlify. L'adresse du site écrite dans les pages (balise canonical, image de partage, `sitemap.xml`, `robots.txt`) est fixée dans `vite.config.js` ; une variable d'environnement `SITE_URL` la remplace si besoin.
 
 Les pages : `/` (le site), `/mentions-legales/`, `/politique-de-confidentialite/`, `/cgv/`, et `404.html` (page introuvable).
 

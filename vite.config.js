@@ -5,9 +5,9 @@ import { fileURLToPath } from 'url';
 const ROOT = fileURLToPath(new URL('.', import.meta.url));
 
 // The site's public address, for the links search engines and link previews need in full
-// (canonical, og:image, sitemap). On Netlify, URL is the site's main address — the custom
-// domain once one is connected — so nothing has to be changed by hand. SITE_URL overrides it.
-const SITE_URL = (process.env.SITE_URL || process.env.URL || 'https://kalion-studio.netlify.app').replace(/\/+$/, '');
+// (canonical, og:image, sitemap): always the main domain, also on Netlify's own addresses and
+// previews (they point search engines to it). A SITE_URL environment variable overrides it.
+const SITE_URL = (process.env.SITE_URL || 'https://www.kalionstudio.com').replace(/\/+$/, '');
 
 // the pages listed in the sitemap
 const PAGES = [
