@@ -9,6 +9,16 @@
   NODE_VERSION = "22"
 
 # ------------------------------------------------------------------
+# One address only: Netlify's own address leads to the domain (the bare domain already does,
+# Netlify redirects it to the primary one, www.kalionstudio.com)
+# ------------------------------------------------------------------
+[[redirects]]
+  from = "https://kalionstudio.netlify.app/*"
+  to = "https://www.kalionstudio.com/:splat"
+  status = 301
+  force = true
+
+# ------------------------------------------------------------------
 # Security headers, on every page
 # ------------------------------------------------------------------
 # Content-Security-Policy: everything comes from the site itself (fonts, images, scripts);
