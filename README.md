@@ -46,11 +46,11 @@ Le fond passe en douceur du sombre à l'ivoire selon la section.
 - **Téléphone** (écrans en hauteur, fenêtres étroites, tablettes à la verticale ; `src/mobile.css`) : le même parcours recomposé pour un écran vertical. Menu plein écran qui s'ouvre en cercle depuis le bouton, mot liquide plus large (toucher l'écran fait éclater une goutte), anneaux des engagements en haut et texte dessous, galerie en grandes cartes, sphère des avis en haut et avis qui se déroulent dessous, formules des tarifs côte à côte avec leurs détails en colonnes, contact non épinglé (la lettre se déplie au fil du défilement). Un téléphone tenu à l'horizontale affiche « Tournez votre téléphone ».
 - **Fluidité sur téléphone** : la hauteur d'écran reste fixe quand la barre du navigateur apparaît ou disparaît (pas de saut), la résolution des scènes 3D s'adapte toute seule à la vitesse de l'appareil, les lumières sont dessinées en petit puis étirées, le grain est fixe, le changement clair/sombre est instantané et seules les valeurs qui changent sont réécrites à chaque image. Safari : flou du mot liquide calculé en JavaScript quand le navigateur ne sait pas flouter un canvas, champs du formulaire en 16 px (pas de zoom automatique).
 
-## Identité visuelle (dossier `brand/`)
+## Identité visuelle
 
-- `kalion-logo-encre` / `kalion-logo-ivoire` (PNG + SVG) : logo « Kalion / Studio » en escalier, orbe braise sur le « i »
-- `kalion-symbole-encre` / `kalion-symbole-ivoire` (PNG + SVG) : le symbole K avec son point de lumière
-- `kalion-planche-identite.png` : planche de présentation (logo, symbole, palette, typo)
+Les fichiers de la marque (logos, symbole K, planche d'identité) sont rangés hors de ce dépôt, dans le dossier Kalion : `marque/` (à côté de `site-internet/`, `reseaux/` et `marketing/`).
+
+- Logo « Kalion / Studio » en escalier, orbe braise sur le « i » ; symbole K avec son point de lumière ; encre #100C0A, ivoire #ECE6DC, braise #FF5B24 ; Clash Display, Instrument Serif, Hanken Grotesk, DM Mono
 - Dans le menu du site : le symbole K seul tant que le grand « Kalion Studio » liquide est à l'écran (hero, footer), puis le logo « Kalion » ailleurs
 
 ## Fichiers
