@@ -566,10 +566,15 @@ async function initGL() {
     if (MOBILE) Object.assign(gl.layout, { hero: 0.03, footer: -0.25, footerScale: 0.94 });
     if (devQ && devQ.get('wordy')) gl.layout.hero = +devQ.get('wordy');
     if (import.meta.env.DEV) window.__gl = gl; // dev only: the visuals place its droplets
-    if (devQ && devQ.get('wordx')) {
-      gl.offsetX = +devQ.get('wordx');
+    // (other words in the same glass, the i's dot in ember: for the social visuals)
+    if (devQ && (devQ.get('wordx') || devQ.has('word') || devQ.has('sub'))) {
+      gl.offsetX = +devQ.get('wordx') || 0;
+      if (devQ.has('word')) gl.word = devQ.get('word');
+      if (devQ.has('sub')) gl.sub = devQ.get('sub');
       gl.drawText();
     }
+    if (devQ && devQ.get('idot')) gl.uniforms.uDotTint.value = +devQ.get('idot');
+    if (devQ && devQ.get('cutout')) gl.uniforms.uCutout.value = 1;
     if (devQ && devQ.get('bevel')) gl.uniforms.uBevel.value = +devQ.get('bevel');
     glScenes.push({ scene: gl, max: glDpr(1.5, 1.5), min: 0.8 });
     await gl.warmup();

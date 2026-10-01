@@ -51,6 +51,9 @@ uniform float uWobble;
 uniform float uPortal;
 uniform float uBevel;
 uniform vec2 uSweep;   // the opening: the letters appear behind this front (x, softness)
+uniform vec3 uDot;     // the dot of the "i" (text space x, y, radius)
+uniform float uDotTint; // 1: that dot is an ember glass bead, as on the logo (dev visuals; 0 on the site)
+uniform float uCutout;  // 1: the glass and its shadow alone, on transparency (dev visuals; 0 on the site)
 
 const vec3 INK = vec3(0.063, 0.047, 0.039);
 const vec3 IVORY = vec3(0.925, 0.902, 0.863);
@@ -193,6 +196,18 @@ void main() {
   vec2 gdir = grad / gl;
   vec3 n = normalize(vec3(-gdir * slope * 0.85, 1.0));
 
+  // (the i's dot as the logo's ember orb: a glass bead, domed like the drops — dev visuals,
+  // uDotTint is 0 on the site)
+  float bead = 0.0;
+  vec2 dq = vec2(0.0);
+  if (uDotTint > 0.0 && uDot.z > 0.0) {
+    vec2 q = warp(p, m);
+    dq = (vec2(q.x, q.y - uTextShift) - uDot.xy) / uDot.z;
+    bead = uDotTint * (1.0 - smoothstep(1.0, 1.3, length(dq)));
+    vec3 ns = normalize(vec3(dq * 0.9, sqrt(max(1.0 - dot(dq, dq), 0.0)) + 0.12));
+    n = normalize(mix(n, ns, bead));
+  }
+
   // refraction with dispersion
   float frost = smoothstep(0.35, 1.0, u);
   vec2 off = -n.xy * 0.055;
@@ -217,6 +232,29 @@ void main() {
   float sh = smoothstep(0.12, 0.75, textSoft(p - so) * 1.4 + blobs(p - so).x * 0.9);
   vec3 base = background(p, 0.0) * (1.0 - sh * 0.45);
 
+  if (uDotTint > 0.0 && uDot.z > 0.0) {
+    // the "i" dotted with the logo's ember orb, in glass: lit from the top left like the
+    // orb (#FF8A55 → #C73A10), the room seen through it, the same highlights, and its
+    // warm glow on the room around it
+    float dd = length(dq);
+    // orange glass: the room seen through it, tinted; the light that crosses the bead
+    // gathers on its far side (bottom right); a bright rim; a small sharp highlight
+    float lit = clamp(dot(n, normalize(vec3(-0.45, 0.55, 0.7))), 0.0, 1.0);
+    float caus = smoothstep(0.1, 0.85, dot(dq, normalize(vec2(0.55, -0.6)))) * (1.0 - smoothstep(0.8, 1.0, dd));
+    vec3 ember = EMBER * (0.28 + refr * 2.2) * (0.75 + 0.35 * lit);
+    ember += vec3(1.0, 0.6, 0.32) * caus * 0.55;
+    ember += mix(EMBER, IVORY, 0.35) * fres * 0.55;
+    ember += vec3(1.0, 0.96, 0.9) * pow(max(dot(n, H), 0.0), 220.0) * 1.6;
+    glass = mix(glass, ember, bead);
+    base += EMBER * 0.16 * uDotTint * exp(-max(dd - 1.0, 0.0) * 2.0);
+  }
+
+  if (uCutout > 0.5) {
+    // (the glass alone and its soft shadow, to lay on another picture)
+    gl_FragColor = vec4(glass * mask, mask + sh * 0.5 * (1.0 - mask));
+    return;
+  }
+
   vec3 col = mix(base, glass, mask);
 
   // vignette + grain
@@ -233,30 +271,30 @@ void main() {
 
 // Staircase lockup: "Kalion" large, "Studio" smaller, one step down and to the right,
 // centred in a W × H frame
-function lockupRuns(ctx, W, H, { family, weight, width }) {
+function lockupRuns(ctx, W, H, { family, weight, width }, word = WORD, sub = SUB) {
   const font = (size) => `${weight} ${size}px "${family}"`;
   ctx.font = font(100);
-  const fs = (100 * W * width) / ctx.measureText(WORD).width;
+  const fs = (100 * W * width) / ctx.measureText(word).width;
   ctx.font = font(fs);
-  const mW = ctx.measureText(WORD);
+  const mW = ctx.measureText(word);
   const fsSub = fs * SUB_SCALE;
   ctx.font = font(fsSub);
-  const mS = ctx.measureText(SUB);
+  const mS = ctx.measureText(sub);
 
   const wordW = mW.width;
   const subX = wordW * SUB_OFFSET; // where "Studio" starts, relative to "Kalion"
   const totalW = Math.max(wordW, subX + mS.width);
   const capW = mW.actualBoundingBoxAscent;
   const capS = mS.actualBoundingBoxAscent;
-  const gap = fs * 0.1;
+  const gap = sub ? fs * 0.1 : 0;
   const blockH = capW + gap + capS;
   const x0 = (W - totalW) / 2;
   const yWord = H / 2 - blockH / 2 + capW; // baseline of "Kalion"
   const ySub = yWord + gap + capS; // baseline of "Studio"
   return {
     runs: [
-      { text: WORD, size: fs, x: x0, y: yWord },
-      { text: SUB, size: fsSub, x: x0 + subX, y: ySub },
+      { text: word, size: fs, x: x0, y: yWord },
+      { text: sub, size: fsSub, x: x0 + subX, y: ySub },
     ],
     top: yWord - capW, // top of the capitals
     bottom: ySub, // baseline of "Studio"
@@ -376,6 +414,9 @@ export class LiquidScene {
       uWobble: { value: 0 },
       uPortal: { value: 0 },
       uBevel: { value: 0.03 },
+      uDot: { value: new THREE.Vector3(0, 0, 0) },
+      uDotTint: { value: 0 },
+      uCutout: { value: 0 },
       uSweep: { value: new THREE.Vector2(1e3, 0.1) },
     };
     // impact splash: fixed directions so the scroll choreography is reversible
@@ -438,7 +479,8 @@ export class LiquidScene {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, W, H);
 
-    const { runs, font } = lockupRuns(ctx, W, H, this.font);
+    // (this.word / this.sub: other words in the same glass — dev visuals only)
+    const { runs, font } = lockupRuns(ctx, W, H, this.font, this.word, this.sub);
     // (dev visuals only: the lockup moved sideways, in a share of the width)
     if (this.offsetX) runs.forEach((r) => (r.x += this.offsetX * W));
     const fs = runs[0].size;
@@ -475,6 +517,8 @@ export class LiquidScene {
     // the words as one sharp shape in one colour, the "i" of "Kalion" dotted with a round
     // dot as on the logo (the font's dot is square): 1.18 × the stem, where the square was
     const dot = this.iDot(ctx, runs[0], font);
+    if (dot) this.uniforms.uDot.value.set(((dot.x + dot.w / 2) / W - 0.5) * this.aspect, 0.5 - (dot.y + dot.h / 2) / H, (dot.w * 0.59) / H);
+    else this.uniforms.uDot.value.z = 0; // (a word without an "i")
     const shapeOf = (color) => {
       const sh = document.createElement('canvas');
       sh.width = W;
