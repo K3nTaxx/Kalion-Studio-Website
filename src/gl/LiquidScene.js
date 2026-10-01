@@ -439,6 +439,8 @@ export class LiquidScene {
     ctx.fillRect(0, 0, W, H);
 
     const { runs, font } = lockupRuns(ctx, W, H, this.font);
+    // (dev visuals only: the lockup moved sideways, in a share of the width)
+    if (this.offsetX) runs.forEach((r) => (r.x += this.offsetX * W));
     const fs = runs[0].size;
     // the centre of every letter (p-space, word at rest) and its size: where the drops of
     // the opening go to make the word
