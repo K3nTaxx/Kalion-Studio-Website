@@ -2305,7 +2305,7 @@ function initContact() {
       '',
       String(data.get('message')),
     ].join('\n');
-    window.location.href = `mailto:k3ntax@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = `mailto:contact@kalionstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     toast('Votre messagerie s’ouvre avec votre demande');
   });
 

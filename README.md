@@ -72,7 +72,7 @@ Le fond passe en douceur du sombre à l'ivoire selon la section.
 
 ## À savoir
 
-- **Formulaire** : il n'y a pas de backend. L'envoi ouvre la messagerie du visiteur avec un mail pré-rempli adressé à k3ntax@gmail.com. Pour recevoir les demandes directement, il faut brancher un service (Formspree, Resend, Supabase…) dans `initContact()` de `src/main.js`.
+- **Formulaire** : il n'y a pas de backend. L'envoi ouvre la messagerie du visiteur avec un mail pré-rempli adressé à contact@kalionstudio.com. Pour recevoir les demandes directement, il faut brancher un service (Formspree, Resend, Supabase…) dans `initContact()` de `src/main.js`.
 - **Discord** : le bouton copie le pseudo « k3ntax », comme sur le site actuel.
 - **Formulaire branché plus tard** : ajouter l'adresse du service à `connect-src` (et `form-action` s'il envoie un formulaire) dans `netlify.toml`, sinon la politique de sécurité le bloquera.
 - **Pages légales** : reprises de l'ancien site et mises à jour (marque Kalion Studio, offre actuelle : 450 € ou 250 € puis 28 €/mois avec 6 mois d'engagement, solde de 200 € pour passer à l'achat unique). À relire avant la mise en ligne : nom commercial, adresse de l'hébergeur, médiateur de la consommation (à nommer).
