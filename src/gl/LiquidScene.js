@@ -37,6 +37,8 @@ uniform vec2 uRes;
 uniform float uAspect;
 uniform float uTime;
 uniform vec4 uBlobs[${MAX}];
+uniform int uN;        // the droplet slots in use: 0 .. uN-1 (the others are empty)
+uniform vec2 uL[4];    // the light rig's four lights (they only depend on the time: see update)
 uniform vec2 uStretch;
 uniform float uTextShift;
 uniform float uTextScale;
@@ -63,6 +65,7 @@ const vec3 AMBER = vec3(1.0, 0.56, 0.3);
 const float T = 0.5;
 
 vec2 ripple(vec2 q, vec4 w, float reach, float freq, float width) {
+  if (w.w == 0.0 || w.z >= 1.0) return vec2(0.0); // (no wave, or it has died out: exactly what the formula gives)
   vec2 d = q - w.xy;
   float l = length(d) + 1e-5;
   float ring = w.z * reach;
@@ -89,6 +92,7 @@ float sweep(vec2 p) {
 }
 
 float textAt(vec2 p, float m) {
+  if (uTextW <= 0.0) return 0.0; // (the word swallowed: exactly what the formula gives)
   vec2 q = warp(p, m);
   vec2 uv = vec2(q.x / uAspect + 0.5, q.y - uTextShift + 0.5);
   vec2 t = texture2D(uText, uv).rg;
@@ -96,6 +100,7 @@ float textAt(vec2 p, float m) {
 }
 
 float textSoft(vec2 p) {
+  if (uTextW <= 0.0) return 0.0;
   vec2 q = uPullC + (p - uPullC) * (1.0 + uPull * uPull * 3.2) / uTextScale;
   vec2 uv = vec2(q.x / uAspect + 0.5, q.y - uTextShift + 0.5);
   return texture2D(uText, uv).g * uTextW * sweep(p);
@@ -106,6 +111,7 @@ vec3 blobs(vec2 p) {
   float f = 0.0;
   vec2 g = vec2(0.0);
   for (int i = 0; i < ${MAX}; i++) {
+    if (i >= uN) break;
     vec4 b = uBlobs[i];
     if (b.z < 1e-4) continue;
     vec2 d = p - b.xy;
@@ -146,10 +152,10 @@ vec3 blobs(vec2 p) {
 vec3 background(vec2 p, float frost) {
   vec3 col = INK;
   // light rig: ember key light (left), amber fill (right), cool rim (top), warm kicker (top-left)
-  vec2 l1 = vec2(-0.3 * uAspect + 0.08 * sin(uTime * 0.21), -0.24 + 0.06 * cos(uTime * 0.17));
-  vec2 l2 = vec2(0.22 * uAspect + 0.06 * cos(uTime * 0.13), 0.36 + 0.04 * sin(uTime * 0.19));
-  vec2 l3 = vec2(0.36 * uAspect + 0.05 * sin(uTime * 0.16), -0.1 + 0.07 * cos(uTime * 0.12));
-  vec2 l4 = vec2(-0.18 * uAspect + 0.05 * cos(uTime * 0.1), 0.44);
+  vec2 l1 = uL[0];
+  vec2 l2 = uL[1];
+  vec2 l3 = uL[2];
+  vec2 l4 = uL[3];
   col += EMBER * 0.36 * exp(-dot(p - l1, p - l1) * 3.0);
   col += COOL * 0.07 * exp(-dot(p - l2, p - l2) * 5.0);
   col += AMBER * 0.27 * exp(-dot(p - l3, p - l3) * 3.6);
@@ -401,6 +407,8 @@ export class LiquidScene {
       uAspect: { value: 1 },
       uTime: { value: 0 },
       uBlobs: { value: this.blobs },
+      uN: { value: MAX },
+      uL: { value: [new THREE.Vector2(), new THREE.Vector2(), new THREE.Vector2(), new THREE.Vector2()] },
       uStretch: { value: new THREE.Vector2() },
       uTextShift: { value: 0.07 },
       uTextScale: { value: 1 },
@@ -460,9 +468,11 @@ export class LiquidScene {
     this.wave = { x: 0, y: 0, age: 1, amp: 0 };
 
     this.resize();
+    this.lights(0, this.aspect);
     this.bindPointer();
     this.last = performance.now();
     this.active = true;
+    this.hold = false;
   }
 
   /* ---------------- text field texture ---------------- */
@@ -626,10 +636,9 @@ export class LiquidScene {
   }
 
   // the rendering resolution only (the quality follows the device's speed): the text
-  // field stays as it is
+  // field stays as it is (three's setPixelRatio resizes the drawing buffer itself, once)
   setPixelRatio(pr) {
     this.renderer.setPixelRatio(pr);
-    this.renderer.setSize(this.width, this.height, false);
     this.uniforms.uRes.value.set(this.width * pr, this.height * pr);
   }
 
@@ -834,13 +843,13 @@ export class LiquidScene {
     // splash droplets thrown out by the impact, then swallowed back
     const fly = seg(s, TI, 0.56);
     const back = seg(s, 0.5, 0.76);
+    const splashing = fly > 0 && back < 1 && !footer;
     this.impactDrops.forEach((d, k) => {
       const out = easeOut(fly);
       const fx = hx + Math.cos(d.a) * d.v * K * out;
       const fy = wordY + Math.sin(d.a) * d.v * K * out - 0.28 * K * fly * fly;
       const bk = easeInOut(back);
-      const live = fly > 0 && back < 1 && !footer;
-      const r = live ? d.r * K * (1 - 0.3 * fly) * (1 - 0.7 * bk) : 0;
+      const r = splashing ? d.r * K * (1 - 0.3 * fly) * (1 - 0.7 * bk) : 0;
       this.blobs[12 + k].set(lerp(fx, hx, bk), lerp(fy, hy, bk), r, 0);
     });
 
@@ -936,6 +945,9 @@ export class LiquidScene {
         const land = clamp((u - 0.82) / 0.18, 0, 1);
         const melt = a * a * (3 - 2 * a);
         const r = u > 0 ? R * (0.26 + 0.3 * land * land) * (1 - melt) : 0;
+        // (a visitor who scrolls straight away: once the big drop has hit the word, its splash
+        // owns slots 12-19 — the opening's last drops have melted into their letters by then)
+        if (6 + i >= 12 && splashing) return;
         this.blobs[6 + i].set(x, y, r, 0);
       });
       // the front: it reaches each letter as its drop lands
@@ -945,7 +957,8 @@ export class LiquidScene {
       U.uSweep.value.set(lerp(b.from - 0.06, b.to + 0.06, k) + (k >= 1 ? clamp(b.t - last, 0, 1) * 4 : 0), 0.07);
       // a ripple runs through the word once it has formed
       const ra = clamp((b.t - last + 0.1) / 1.4, 0, 1);
-      if (ra > 0 && ra < 1) U.uImpact.value.set(0, wordY, ra, 0.018);
+      // (not over the impact's own shockwave, if the drop has already hit the word)
+      if (ra > 0 && ra < 1 && hit <= 0) U.uImpact.value.set(0, wordY, ra, 0.018);
       if (b.t > last + 1.6) {
         this.burst = null; // (the slots go back to the splashes)
         U.uSweep.value.set(1e3, 0.07);
@@ -956,6 +969,21 @@ export class LiquidScene {
     const w = this.wave;
     w.age = Math.min(1, w.age + dt / 1.3);
     U.uWave.value.set(w.x, w.y, w.age, w.amp);
+
+    // (computed here once, not for every pixel: the light rig, and the slots in use)
+    this.lights(st.time, A);
+    let n = 0;
+    for (let i = 0; i < MAX; i++) if (this.blobs[i].z >= 1e-4) n = i + 1;
+    U.uN.value = n;
+  }
+
+  // the background's four lights: they drift slowly with the time
+  lights(t, A) {
+    const L = this.uniforms.uL.value;
+    L[0].set(-0.3 * A + 0.08 * Math.sin(t * 0.21), -0.24 + 0.06 * Math.cos(t * 0.17));
+    L[1].set(0.22 * A + 0.06 * Math.cos(t * 0.13), 0.36 + 0.04 * Math.sin(t * 0.19));
+    L[2].set(0.36 * A + 0.05 * Math.sin(t * 0.16), -0.1 + 0.07 * Math.cos(t * 0.12));
+    L[3].set(-0.18 * A + 0.05 * Math.cos(t * 0.1), 0.44);
   }
 
   render() {
@@ -964,6 +992,8 @@ export class LiquidScene {
     this.last = now;
     if (!this.active) return;
     this.update(dt);
+    // (hold: still hidden under the preloader — its state goes on, nothing is drawn)
+    if (this.hold) return;
     this.renderer.render(this.scene, this.camera);
   }
 }

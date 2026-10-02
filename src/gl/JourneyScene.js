@@ -408,10 +408,11 @@ export class JourneyScene {
     this.dustU.uScale.value = (h * pr) / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)));
   }
 
-  // the rendering resolution only (it follows the device's speed)
+  // the rendering resolution only (it follows the device's speed): the drawing buffer is
+  // resized once (three's setPixelRatio), the layout is not measured again
   setPixelRatio(pr) {
     this.renderer.setPixelRatio(pr);
-    this.resize();
+    this.dustU.uScale.value = (this.height * pr) / (2 * Math.tan(THREE.MathUtils.degToRad(this.camera.fov / 2)));
   }
 
   async warmup() {

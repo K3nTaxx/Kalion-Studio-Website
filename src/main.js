@@ -110,7 +110,10 @@ const measureVp = () => {
   vp.h = ((MOBILE || TOUCH) && vhProbe.offsetHeight) || window.innerHeight;
 };
 measureVp();
-ScrollTrigger.config({ ignoreMobileResize: true });
+// (not on the window's 'load' either: every image sits in a box of fixed proportions, so its
+// arrival changes nothing — but on a slow connection 'load' can come after the opening, and a
+// full refresh would then re-measure the whole page in the middle of the first scroll)
+ScrollTrigger.config({ ignoreMobileResize: true, autoRefreshEvents: 'visibilitychange,DOMContentLoaded,resize' });
 // a real resize (not the bars of a phone's browser): fn() runs on it
 const realResizeFns = [];
 const onRealResize = (fn) => realResizeFns.push(fn);
@@ -134,48 +137,111 @@ const onRealResize = (fn) => realResizeFns.push(fn);
 // (dev only: ?dpr=3 renders the scenes at full resolution, for the social visuals)
 const DEV_DPR = import.meta.env.DEV ? +new URLSearchParams(location.search).get('dpr') : 0;
 const glDpr = (max, mobileMax = max) => DEV_DPR || Math.min(window.devicePixelRatio || 1, MOBILE ? mobileMax : max);
-const glScenes = []; // { scene, max, min }: scene.setPixelRatio(pr)
+const glScenes = []; // { scene, max, min, pr }: scene.setPixelRatio(pr) (pr: the one it has now)
 const quality = { scale: 1 };
-function applyQuality(scale) {
-  quality.scale = scale;
-  glScenes.forEach((g) => g.scene && g.scene.setPixelRatio(Math.max(g.min, g.max * scale)));
+// A new resolution reallocates the canvas's drawing buffer (and clears it): a scene is only
+// brought to it in the governor's own tick, which runs before every render of the frame (the
+// canvas is redrawn at once, never shown blank), and never in the middle of a scroll. The
+// scenes on screen first; the hidden ones afterwards, one per frame (or as they come on).
+function syncQuality(g) {
+  if (!g.scene) return false;
+  const pr = Math.max(g.min, g.max * quality.scale);
+  if (Math.abs(g.pr - pr) < 1e-3) return false;
+  g.pr = pr;
+  g.scene.setPixelRatio(pr);
+  return true;
 }
 function initQuality() {
   if (import.meta.env.DEV) window.__q = () => quality.scale; // dev only: the tests read it
   if (!TOUCH && !MOBILE) return; // (computers: the fixed caps are fine)
-  let acc = 0;
-  let n = 0;
+  // It measures the page as the visitor uses it: not the opening (its own one-off costs: the
+  // page is painted for the first time, the drops burst), nor the first moments of each scroll
+  // (a section's first paint, a pin switching): lowering the resolution cures neither, it
+  // would only blur the hero in the middle of its choreography. Only a sustained slowness
+  // counts (a window's average without its 4 worst frames, two windows in a row); it comes
+  // back up only after a long calm, and stops trying if it was wrong once.
+  const WIN = 40;
+  let armed = false;
+  const arm = () => setTimeout(() => (armed = true), 1500);
+  if (window.__kalionOpened && !lenis.isStopped) arm();
+  // (playIntro / openWithoutIntro call it once the scroll is free)
+  else
+    quality.arm = () => {
+      quality.arm = null;
+      arm();
+    };
+  const win = [];
+  let settle = 0;
+  let bad = 0;
   let good = 0;
-  let settle = 60;
+  let base = Infinity; // the best window seen: the screen's own frame time
   let before = 0; // the average frame before the last step down
   let capped = false; // the screen runs at 30 Hz (power saving): lowering doesn't help
-  gsap.ticker.add((t, dms) => {
-    if (document.hidden || dms > 250) return;
-    if (settle > 0) {
-      settle--;
-      return;
-    }
-    acc += dms;
-    n++;
-    if (n < 40) return;
-    const avg = acc / n;
-    acc = 0;
-    n = 0;
-    if (before && avg > before * 0.93 && avg > 24) capped = true; // it did not get faster
-    before = 0;
-    if (avg > (capped ? 40 : 21) && quality.scale > 0.5) {
-      before = avg;
-      applyQuality(Math.max(0.5, quality.scale * 0.8));
-      settle = 20;
-      good = 0;
-    } else if (avg < 14.5) {
-      if (++good >= 5 && quality.scale < 1) {
-        applyQuality(Math.min(1, quality.scale * 1.12));
-        settle = 20;
+  let lastStep = 0;
+  let wentUp = false;
+  let noUp = false;
+  let scrollStart = -1e9;
+  let wasScrolling = false;
+  const step = (scale, now) => {
+    quality.scale = scale;
+    lastStep = now;
+    settle = 20;
+    bad = 0;
+    good = 0;
+    win.length = 0;
+  };
+  gsap.ticker.add(
+    (t, dms) => {
+      const now = t * 1000;
+      const scrolling = !!lenis.isScrolling;
+      if (scrolling && !wasScrolling) scrollStart = now;
+      wasScrolling = scrolling;
+
+      // bring the scenes to the current scale (between scrolls only)
+      if (!scrolling && !menu.open) {
+        let hidden = 1; // (one hidden scene per frame)
+        glScenes.forEach((g) => {
+          if (g.scene && g.scene.active) syncQuality(g);
+          else if (hidden > 0 && syncQuality(g)) hidden--;
+        });
+      }
+
+      if (!armed || document.hidden || dms > 250) return;
+      if (settle > 0) {
+        settle--;
+        return;
+      }
+      if (scrolling && now - scrollStart < 600) return;
+      win.push(dms);
+      if (win.length < WIN) return;
+      win.sort((a, b) => a - b);
+      let sum = 0;
+      for (let i = 0; i < WIN - 4; i++) sum += win[i];
+      const avg = sum / (WIN - 4);
+      win.length = 0;
+      base = Math.min(base, Math.max(avg, 6));
+      if (before && avg > before * 0.93 && avg > 24) capped = true; // it did not get faster
+      before = 0;
+      if (avg > (capped ? 40 : 21) && quality.scale > 0.5) {
+        good = 0;
+        if (++bad < 2) return;
+        before = avg;
+        if (wentUp) noUp = true; // (it went up, and it was too much: it stays down)
+        step(Math.max(0.5, quality.scale * 0.8), now);
+      } else if (avg < base * 1.12 + 0.5) {
+        bad = 0;
+        if (++good >= 12 && quality.scale < 1 && !noUp && !scrolling && now - lastStep > 10000) {
+          wentUp = true;
+          step(Math.min(1, quality.scale * 1.12), now);
+        }
+      } else {
+        bad = 0;
         good = 0;
       }
-    } else good = 0;
-  });
+    },
+    false,
+    true // (first in each frame: before the scenes render)
+  );
 }
 
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -184,8 +250,56 @@ window.scrollTo(0, 0);
 /* ------------------------------------------------------------------
    Smooth scroll
 ------------------------------------------------------------------ */
-const lenis = new Lenis({ lerp: reduced ? 1 : 0.085, wheelMultiplier: 0.9, smoothWheel: !reduced });
-lenis.on('scroll', ScrollTrigger.update);
+// (touch screens: the finger scrolls natively, Lenis only follows the 'scroll' event. Its own
+// wheel/touch listeners are non-passive on the window: there, every scroll would have to wait
+// for the page's script before it may start — iOS could no longer start it on its own. They
+// are given a detached element instead; the page blocks the scroll itself while Lenis is
+// stopped (the opening, the menu), and a finger still interrupts a scroll Lenis is animating.)
+const lenis = new Lenis({ lerp: reduced ? 1 : 0.085, wheelMultiplier: 0.9, smoothWheel: !reduced, ...(TOUCH ? { eventsTarget: document.createElement('div') } : {}) });
+if (TOUCH) {
+  const block = (e) => {
+    const t = e.target;
+    if (t && t.closest && t.closest('[data-lenis-prevent]')) return; // (a panel that scrolls itself)
+    if (e.cancelable) e.preventDefault();
+  };
+  let blocking = false;
+  const sync = () => {
+    if (lenis.isStopped === blocking) return;
+    blocking = lenis.isStopped;
+    const m = blocking ? 'addEventListener' : 'removeEventListener';
+    window[m]('touchmove', block, { passive: false });
+    window[m]('wheel', block, { passive: false });
+  };
+  const stop = lenis.stop.bind(lenis);
+  const start = lenis.start.bind(lenis);
+  lenis.stop = () => {
+    stop();
+    sync();
+  };
+  lenis.start = () => {
+    start();
+    sync();
+  };
+  window.addEventListener(
+    'touchmove',
+    () => {
+      if (lenis.isScrolling !== 'smooth' || lenis.isStopped) return;
+      lenis.isScrolling = 'native';
+      lenis.animate.stop();
+    },
+    { passive: true }
+  );
+}
+// (a native scroll — a finger, a scrollbar — is already passed on by ScrollTrigger's own
+// 'scroll' listener, in the same event: updating every trigger a second time would only
+// make the browser restyle the page again, mid-frame. Only the scrolls Lenis drives itself
+// are passed on here.)
+lenis.on('scroll', (l) => l.isScrolling !== 'native' && ScrollTrigger.update());
+// the scroll position as Lenis last reported it: the scenes read it every frame (window.scrollY
+// read there would make the browser restyle and lay out the page in the middle of the frame,
+// after the styles the scenes before have just written — once per scene)
+let scrollPos = window.scrollY;
+lenis.on('scroll', (l) => (scrollPos = l.scroll));
 gsap.ticker.add((t) => lenis.raf(t * 1000));
 gsap.ticker.lagSmoothing(0);
 lenis.stop();
@@ -424,8 +538,15 @@ function initLightsCanvas() {
   let sp = 0;
   lenis.on('scroll', ({ scroll, limit }) => (sp = limit > 0 ? scroll / limit : 0));
   let frame = 0;
+  let hidden = false;
   gsap.ticker.add((t) => {
-    if (frame++ % 2) return; // (30 fps is plenty for lights this slow)
+    // (not while the opaque hero liquid covers them; drawn at once when it opens)
+    if (glCover.on) {
+      hidden = true;
+      return;
+    }
+    if (frame++ % 2 && !hidden) return; // (30 fps is plenty for lights this slow)
+    hidden = false;
     const W = c.width;
     const H = c.height;
     ctx.clearRect(0, 0, W, H);
@@ -513,6 +634,8 @@ let footerH = 0;
 const measureFooter = () => (footerH = $('.footer').offsetHeight);
 ScrollTrigger.addEventListener('refresh', measureFooter);
 const glState = { hero: 0, portal: 0, footer: 0 };
+// (what the opaque hero liquid hides: see syncGL)
+const glCover = { on: false, lights: $('.lights') };
 
 function syncGL() {
   if (!gl) return;
@@ -543,6 +666,16 @@ function syncGL() {
   }
   css(canvas, 'visibility', visible ? 'visible' : 'hidden');
   gl.active = visible;
+  // Until its drop opens (the portal), the hero's liquid is opaque over the whole screen: the
+  // phone's light rig under it (a small canvas stretched over the screen, see
+  // initLightsCanvas) is neither drawn nor composited meanwhile — nothing of it can be seen.
+  // (Not the manifesto sliding in underneath: hidden, it would have to be painted all at once
+  // when it shows; visible, the browser paints it ahead, while it is still off screen.)
+  const covered = glState.footer <= 0.001 && glState.portal <= 0;
+  if (covered !== glCover.on) {
+    glCover.on = covered;
+    if (TOUCH || MOBILE) css(glCover.lights, 'visibility', covered ? 'hidden' : '');
+  }
   // over the liquid, the glass drop replaces the cursor ring
   const liquidCursor = glState.footer > 0.001 ? glState.footer > 0.2 : glState.portal < 0.05;
   root.classList.toggle('cursor-liquid', liquidCursor);
@@ -576,8 +709,9 @@ async function initGL() {
     if (devQ && devQ.get('idot')) gl.uniforms.uDotTint.value = +devQ.get('idot');
     if (devQ && devQ.get('cutout')) gl.uniforms.uCutout.value = 1;
     if (devQ && devQ.get('bevel')) gl.uniforms.uBevel.value = +devQ.get('bevel');
-    glScenes.push({ scene: gl, max: glDpr(1.5, 1.5), min: 0.8 });
+    glScenes.push({ scene: gl, max: glDpr(1.5, 1.5), min: 0.8, pr: glDpr(1.5, 1.5) });
     await gl.warmup();
+    gl.hold = true; // (under the preloader: drawn again just before its hole opens, see playIntro)
     gsap.ticker.add(() => gl.render());
     let rt;
     onRealResize(() => {
@@ -640,24 +774,53 @@ function playIntro() {
   const r0 = box.width / 2;
   const reach = Math.hypot(Math.max(o.x, W - o.x), Math.max(o.y, H - o.y)) + 30;
 
-  // The orb becomes a full-screen ember layer cut to its disc (a mask: it can grow as
+  // The orb becomes a full-screen ember layer cut to its disc (a clip: it can grow as
   // big as the screen and stay crisp). Later a hole opens in its middle: we go through.
+  // (a clip path, redrawn each frame as a shape by the compositor; a gradient mask would be
+  // repainted over the whole screen each frame — on a phone, twice. Browsers without
+  // path() clips keep the mask.)
   const ember = document.createElement('i');
   ember.style.cssText = 'position:fixed;inset:0;z-index:10001;pointer-events:none;background:#ff5b24';
   document.body.append(ember);
   orbEl.style.opacity = '0';
   const orb = { R: r0, sx: 1, sy: 1, hole: 0 };
+  const CLIP = !!(window.CSS && CSS.supports && CSS.supports('clip-path', 'path(evenodd, "M0 0H1V1Z")'));
+  const ring = (x, y, a, b) => `M${(x - a).toFixed(1)} ${y.toFixed(1)}a${a.toFixed(1)} ${b.toFixed(1)} 0 1 0 ${(2 * a).toFixed(1)} 0a${a.toFixed(1)} ${b.toFixed(1)} 0 1 0 ${(-2 * a).toFixed(1)} 0Z`;
+  let loaderOn = true; // (hidden once all is ember around the hole)
+  let emberOn = true; // (gone once its ring has rushed past the edges of the screen)
+  let lastE = '';
+  let lastL = '';
   const draw = () => {
+    if (!emberOn) return;
     const rx = Math.max(orb.R * orb.sx, 0.5);
     const ry = Math.max(orb.R * orb.sy, 0.5);
     const e = Math.min(100 / rx, 8); // ≈ 1 px of soft edge, in % of the radius
     const k = Math.min((orb.hole / Math.max(orb.R, 1)) * 100, 99);
+    if (CLIP) {
+      if (orb.hole >= reach) {
+        emberOn = false;
+        ember.remove();
+        return;
+      }
+      // (the hole's edge in the middle of the mask's soft inner edge)
+      const f = Math.min(k + e * 1.5, 99.5) / 100;
+      const c = orb.hole > 0.5 ? `path(evenodd, "${ring(o.x, o.y, rx, ry)}${ring(o.x, o.y, rx * f, ry * f)}")` : `ellipse(${rx.toFixed(1)}px ${ry.toFixed(1)}px at ${o.x.toFixed(1)}px ${o.y.toFixed(1)}px)`;
+      if (c !== lastE) ember.style.clipPath = lastE = c;
+      // the hole goes through the preloader too: the page shows in it (the same hole, a
+      // hair wider: no rim of the preloader may show at its edge)
+      if (orb.hole > 0.5 && loaderOn) {
+        const lh = rx * f + 0.5;
+        const lc = `path(evenodd, "M-10 -10H${W + 10}V${H + 10}H-10Z${ring(o.x, o.y, lh, lh)}")`;
+        if (lc !== lastL) el.style.clipPath = lastL = lc;
+      }
+      return;
+    }
     const inner = orb.hole > 0.5 ? `transparent ${k.toFixed(3)}%, #000 ${Math.min(k + e * 3, 99.5).toFixed(3)}%, ` : '#000 0%, ';
     const m = `radial-gradient(${rx.toFixed(1)}px ${ry.toFixed(1)}px at ${o.x.toFixed(1)}px ${o.y.toFixed(1)}px, ${inner}#000 ${(100 - e).toFixed(3)}%, transparent 100%)`;
     ember.style.webkitMaskImage = m;
     ember.style.maskImage = m;
     // the hole goes through the preloader too: the page shows in it
-    if (orb.hole > 0.5) {
+    if (orb.hole > 0.5 && loaderOn) {
       const lm = `radial-gradient(circle ${orb.hole.toFixed(1)}px at ${o.x.toFixed(1)}px ${o.y.toFixed(1)}px, transparent calc(100% - 1px), #000 100%)`;
       el.style.webkitMaskImage = lm;
       el.style.maskImage = lm;
@@ -702,9 +865,13 @@ function playIntro() {
     // the dive: faster and faster into the dot; the letters fly past
     .to(zoom, { z: zMax, duration: DIVE_T, ease: 'expo.in', onUpdate: applyZoom }, DIVE)
     .to(brand, { opacity: 0, duration: 0.25, ease: 'power1.in' }, DIVE + DIVE_T * 0.62)
-    .add(() => (el.style.visibility = 'hidden'), DIVE + DIVE_T + 0.05) // (all ember around the hole by now)
+    .add(() => {
+      el.style.visibility = 'hidden'; // (all ember around the hole by now)
+      loaderOn = false;
+    }, DIVE + DIVE_T + 0.05)
     // through the orb: its middle opens and its rim rushes out past the edges
     .to(orb, { hole: reach * 1.02, duration: 0.75, ease: 'power3.in' }, THROUGH)
+    .add(() => gl && (gl.hold = false), THROUGH - 0.1)
     .add(startWord, WORD)
     // the interface, once the word has formed
     .add(() => navIn(), UI)
@@ -715,6 +882,7 @@ function playIntro() {
     .add(() => {
       lenis.start();
       el.remove();
+      if (quality.arm) quality.arm();
     }, UI + 0.3);
   if (FAST) tl.progress(1);
 }
@@ -742,7 +910,8 @@ function initThemes() {
   let current = null;
   const setSection = (sec) => {
     // data-tone="auto": the section drives the theme itself (see initProjects)
-    if (sec.dataset.tone !== 'auto') root.dataset.theme = sec.dataset.tone;
+    // (only if it changes: rewriting the same value can make the browser restyle the whole page)
+    if (sec.dataset.tone !== 'auto' && root.dataset.theme !== sec.dataset.tone) root.dataset.theme = sec.dataset.tone;
     if (current === sec.dataset.label) return;
     current = sec.dataset.label;
     gsap.to([num, label], {
@@ -940,7 +1109,7 @@ async function initJourney() {
       caption: v.dataset.caption || '',
     }));
     journey = new JourneyScene($('.pillars__gl'), figures, { dpr: glDpr(1.5, 1.5) });
-    glScenes.push({ scene: journey, max: glDpr(1.5, 1.5), min: 0.75 });
+    glScenes.push({ scene: journey, max: glDpr(1.5, 1.5), min: 0.75, pr: glDpr(1.5, 1.5) });
     await journey.warmup();
   } catch (err) {
     console.warn('Parcours 3D indisponible', err);
@@ -1126,7 +1295,7 @@ let projectsGalleryY = null; // scroll position where the gallery is in place (n
 async function initProjectsTitle(onHeavyDone = () => {}) {
   try {
     ptitle = new ProjectsTitle($('.projects__gl'), { dpr: glDpr(1.5, 1.5) });
-    glScenes.push({ scene: ptitle, max: glDpr(1.5, 1.5), min: 0.75 });
+    glScenes.push({ scene: ptitle, max: glDpr(1.5, 1.5), min: 0.75, pr: glDpr(1.5, 1.5) });
     await ptitle.warmup(nextFrame, onHeavyDone);
   } catch (err) {
     console.warn('Titre 3D indisponible', err);
@@ -1208,7 +1377,7 @@ function initProjects() {
     if (!visible) return;
     const dt = Math.min(deltaMS / 1000, 0.05);
     const vh = vp.h;
-    const px = window.scrollY - pin.start;
+    const px = scrollPos - pin.start;
     const u = px / vh;
 
     // band: comes out of the light (big, blurred → sharp), then the ink rises over it
@@ -1475,7 +1644,7 @@ const reviewFonts = () =>
 async function initReviewsGL() {
   try {
     rvgl = new ReviewsScene($('.reviews__gl'), { dpr: glDpr(1.5, 2), mobile: MOBILE });
-    glScenes.push({ scene: rvgl, max: glDpr(1.5, 2), min: 1 });
+    glScenes.push({ scene: rvgl, max: glDpr(1.5, 2), min: 1, pr: glDpr(1.5, 2) });
     await reviewFonts();
     rvgl.setRows(readReviews());
     await rvgl.warmup();
@@ -1583,7 +1752,7 @@ function initReviews() {
 
   gsap.ticker.add((time, deltaMS) => {
     const vh = vp.h;
-    const u = (window.scrollY - pin.start) / vh;
+    const u = (scrollPos - pin.start) / vh;
     const on = u > -0.05 && u < TOTAL + 0.02; // afterwards the tarifs cover it
     if (on !== visible) {
       visible = on;
@@ -1731,7 +1900,7 @@ async function initDrops() {
   try {
     // (the same resolution as the reviews: they hand their sphere over, pixel for pixel)
     drops = new DropsScene($('.pricing__gl'), { dpr: glDpr(1.5, 2) });
-    glScenes.push({ scene: drops, max: glDpr(1.5, 2), min: 1 });
+    glScenes.push({ scene: drops, max: glDpr(1.5, 2), min: 1, pr: glDpr(1.5, 2) });
     await drops.warmup();
   } catch (err) {
     console.warn('Gouttes indisponibles', err);
@@ -1845,7 +2014,7 @@ function initPricing() {
     const W = vp.w;
     const H = vp.h;
     const A = W / H;
-    const u = (window.scrollY - pin.start) / H; // < 0 while the reviews are still on
+    const u = (scrollPos - pin.start) / H; // < 0 while the reviews are still on
     const on = u > -0.01 && u < TOTAL + 0.02;
     if (on !== visible) {
       visible = on;
@@ -2376,7 +2545,7 @@ function initContactMobile() {
   gsap.ticker.add(() => {
     const W = vp.w;
     const H = vp.h;
-    const y = window.scrollY;
+    const y = scrollPos;
 
     // --- the drop falling from the FAQ onto the full stop ---
     const f = seg(y, faqEnd.start, titleY - H * MEET);
@@ -2475,7 +2644,7 @@ function initContactScene() {
   gsap.ticker.add(() => {
     const W = vp.w;
     const H = vp.h;
-    const y = window.scrollY;
+    const y = scrollPos;
 
     // --- the drop falling from the FAQ onto the full stop ---
     const f = seg(y, faqEnd.start, pin.start + H * MEET);
@@ -2650,9 +2819,13 @@ async function boot() {
 function openWithoutIntro() {
   window.__kalionOpened = true;
   root.classList.remove('boot-fallback');
-  if (gl) gl.assemble(0, 0);
+  if (gl) {
+    gl.hold = false;
+    gl.assemble(0, 0);
+  }
   navIn();
   lenis.start();
+  if (quality.arm) quality.arm();
 }
 
 boot();

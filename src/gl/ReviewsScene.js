@@ -408,10 +408,11 @@ export class ReviewsScene {
     this.uniforms.uVh.value = h;
   }
 
-  // the rendering resolution only (it follows the device's speed)
+  // the rendering resolution only (it follows the device's speed): the drawing buffer is
+  // resized once (three's setPixelRatio), the layout is not measured again
   setPixelRatio(pr) {
     this.renderer.setPixelRatio(pr);
-    this.resize();
+    this.uniforms.uRes.value.set(this.width * pr, this.height * pr);
     this.uniforms.uRowLod.value = Math.max(0, Math.log2(this.texDpr / pr));
   }
 

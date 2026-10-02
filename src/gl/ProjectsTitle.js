@@ -308,10 +308,11 @@ export class ProjectsTitle {
     this.group.scale.setScalar(this.scale);
   }
 
-  // the rendering resolution only (it follows the device's speed)
+  // the rendering resolution only (it follows the device's speed): the drawing buffer is
+  // resized once (three's setPixelRatio), the layout is not measured again
   setPixelRatio(pr) {
     this.renderer.setPixelRatio(pr);
-    this.resize();
+    this.renderer.getDrawingBufferSize(this.U.uRes.value);
   }
 
   // nextFrame: lets the page paint between the heavy steps (the preloader keeps moving);
