@@ -452,7 +452,9 @@ export class ReviewsScene {
     const quoteFs = this.mobile ? cl(13.5, (short ? 3.5 : 3.6) * vw, 17) : cl(15, 1.15 * vw, 21);
     const lh = quoteFs * 1.32;
     const cardW = this.mobile ? cl(250, (short ? 80 : 70) * vw, 340) : cl(290, 24 * vw, 430);
-    const gap = this.mobile ? cl(36, 10 * vw, 60) : cl(48, 4.4 * vw, 90);
+    let gap = this.mobile ? cl(36, 10 * vw, 60) : cl(48, 4.4 * vw, 90);
+    // (phone layout on a wide portrait screen: a loop long enough that a review is never in both rows at once)
+    if (this.mobile) gap = Math.max(gap, (2 * vw * 100 + 2 * cardW + 120) / list.length - cardW);
     const starR = quoteFs * 0.34;
     const nameFs = quoteFs * 1.06;
     const roleFs = cl(9.5, 0.62 * vw, 12);
@@ -514,7 +516,10 @@ export class ReviewsScene {
     };
 
     // two orders that never put the same review at the same place in both rows
-    const orders = [list.map((_, i) => i), [4, 6, 1, 5, 0, 2, 3].filter((i) => i < list.length)];
+    // (phone: the second row is the first one backwards — drifting the other way at the same
+    // pace, a review then only ever meets its twin at two fixed points, kept off screen: see
+    // initReviews in main.js)
+    const orders = [list.map((_, i) => i), this.mobile ? list.map((_, i) => list.length - 1 - i) : [4, 6, 1, 5, 0, 2, 3].filter((i) => i < list.length)];
     orders.forEach((order, row) => {
       const y0 = row * H;
       order.forEach((idx, k) => {
@@ -577,6 +582,9 @@ export class ReviewsScene {
     U.uRowH.value = H;
     this.rowH = H;
     this.rowPer = per;
+    this.rowCard = cardW;
+    this.rowLoop = loop;
+    this.rowCount = list.length;
   }
 
   async warmup() {

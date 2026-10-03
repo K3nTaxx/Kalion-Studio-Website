@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kalion Studio</title>
-  <meta name="description" content="Kalion Studio, studio de webdesign indépendant en France. Sites vitrines sur-mesure à 750 €, ou tout compris dès 450 € puis 28 €/mois. Livrés en 5 à 7 jours." />
+  <meta name="description" content="Kalion Studio, studio de webdesign en France : création de sites internet sur-mesure. Site vitrine 750 € ou 450 € puis 28 €/mois, livré en 5 à 7 jours." />
   <meta name="author" content="Kalion Studio" />
-  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
   <link rel="canonical" href="%SITE_URL%/" />
   <meta name="theme-color" content="#100c0a" />
   <meta name="color-scheme" content="dark" />
@@ -17,22 +17,26 @@
   <meta property="og:locale" content="fr_FR" />
   <meta property="og:site_name" content="Kalion Studio" />
   <meta property="og:title" content="Kalion Studio" />
-  <meta property="og:description" content="Studio de webdesign indépendant : des sites sur-mesure qui vous démarquent. Site vitrine à 750 €, ou tout compris dès 450 € puis 28 €/mois. Livré en 5 à 7 jours." />
+  <meta property="og:description" content="Kalion Studio crée des sites internet sur-mesure qui vous démarquent. Site vitrine à 750 €, ou 450 € puis 28 €/mois tout compris. Livré en 5 à 7 jours." />
   <meta property="og:url" content="%SITE_URL%/" />
   <meta property="og:image" content="%SITE_URL%/og-image.jpg" />
   <meta property="og:image:type" content="image/jpeg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="Logo Kalion Studio : des sites qui vous démarquent" />
+  <meta property="og:image:alt" content="Kalion Studio, studio de webdesign indépendant en France : des sites qui vous démarquent." />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Kalion Studio" />
-  <meta name="twitter:description" content="Studio de webdesign indépendant : des sites sur-mesure qui vous démarquent. Livrés en 5 à 7 jours." />
+  <meta name="twitter:description" content="Kalion Studio, studio de webdesign en France : sites internet sur-mesure dès 450 €, livrés en 5 à 7 jours. Des sites qui vous démarquent." />
   <meta name="twitter:image" content="%SITE_URL%/og-image.jpg" />
+  <meta name="twitter:image:alt" content="Kalion Studio, studio de webdesign indépendant en France : des sites qui vous démarquent." />
   <link rel="icon" href="/favicon.ico" sizes="32x32" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/site.webmanifest" />
-  <!-- for search engines: who the studio is and what it offers -->
+  <!-- the studio's official profile (same entity as the site) -->
+  <link rel="me" href="https://www.instagram.com/kalion.studio/" />
+  <!-- for search engines and AI assistants: who the studio is, what it offers, its FAQ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,31 +46,226 @@
         "@id": "%SITE_URL%/#website",
         "url": "%SITE_URL%/",
         "name": "Kalion Studio",
+        "alternateName": ["Kalion", "kalionstudio.com"],
+        "description": "Site officiel de Kalion Studio, studio de webdesign indépendant en France : création de sites internet sur-mesure.",
         "inLanguage": "fr-FR",
         "publisher": { "@id": "%SITE_URL%/#studio" }
       },
       {
-        "@type": "ProfessionalService",
+        "@type": "WebPage",
+        "@id": "%SITE_URL%/#webpage",
+        "url": "%SITE_URL%/",
+        "name": "Kalion Studio",
+        "description": "Kalion Studio, studio de webdesign en France : création de sites internet sur-mesure. Site vitrine 750 € ou 450 € puis 28 €/mois, livré en 5 à 7 jours.",
+        "inLanguage": "fr-FR",
+        "datePublished": "2026-10-01",
+        "isPartOf": { "@id": "%SITE_URL%/#website" },
+        "about": { "@id": "%SITE_URL%/#studio" },
+        "mainEntity": { "@id": "%SITE_URL%/#studio" },
+        "primaryImageOfPage": { "@id": "%SITE_URL%/#og-image" },
+        "hasPart": { "@id": "%SITE_URL%/#faq" }
+      },
+      {
+        "@type": "OnlineBusiness",
         "@id": "%SITE_URL%/#studio",
         "name": "Kalion Studio",
+        "alternateName": ["Kalion", "Studio Kalion"],
+        "slogan": "Des sites qui vous démarquent.",
+        "description": "Kalion Studio est un studio de webdesign indépendant basé en France, spécialisé dans la création de sites internet sur-mesure, responsive et optimisés pour Google. Sites vitrines livrés en 5 à 7 jours (750 € en achat unique, ou 450 € puis 28 €/mois tout compris) et projets sur-mesure sur devis : boutique en ligne, espace client, dashboard d'administration, IA intégrée.",
+        "disambiguatingDescription": "Kalion Studio (Kalion avec un K) est un studio de webdesign : il conçoit et développe des sites internet. Ce n'est pas un studio photo.",
         "url": "%SITE_URL%/",
-        "logo": "%SITE_URL%/icon-512.png",
-        "image": "%SITE_URL%/og-image.jpg",
-        "description": "Studio de webdesign indépendant : création de sites vitrines et de projets web sur-mesure, responsive et optimisés pour le référencement.",
+        "logo": {
+          "@type": "ImageObject",
+          "@id": "%SITE_URL%/#logo",
+          "url": "%SITE_URL%/icon-512.png",
+          "contentUrl": "%SITE_URL%/icon-512.png",
+          "width": 512,
+          "height": 512,
+          "caption": "Logo Kalion Studio"
+        },
+        "image": {
+          "@type": "ImageObject",
+          "@id": "%SITE_URL%/#og-image",
+          "url": "%SITE_URL%/og-image.jpg",
+          "contentUrl": "%SITE_URL%/og-image.jpg",
+          "width": 1200,
+          "height": 630,
+          "caption": "Kalion Studio, studio de webdesign indépendant en France : des sites qui vous démarquent."
+        },
         "email": "contact@kalionstudio.com",
         "telephone": "+33658234103",
-        "areaServed": { "@type": "Country", "name": "France" },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "sales",
+          "email": "contact@kalionstudio.com",
+          "telephone": "+33658234103",
+          "url": "%SITE_URL%/#contact",
+          "availableLanguage": "fr"
+        },
         "address": { "@type": "PostalAddress", "addressCountry": "FR" },
-        "priceRange": "€€",
+        "areaServed": [
+          { "@type": "Country", "name": "France", "sameAs": "https://www.wikidata.org/wiki/Q142" },
+          "International (à distance)"
+        ],
+        "knowsAbout": [
+          { "@type": "Thing", "name": "Webdesign", "sameAs": "https://www.wikidata.org/wiki/Q190637" },
+          "Création de sites internet",
+          "Site vitrine",
+          "Refonte de site internet",
+          { "@type": "Thing", "name": "Développement web", "sameAs": "https://www.wikidata.org/wiki/Q386275" },
+          { "@type": "Thing", "name": "Design responsive", "sameAs": "https://www.wikidata.org/wiki/Q420295" },
+          {
+            "@type": "Thing",
+            "name": "Référencement naturel (SEO)",
+            "sameAs": "https://www.wikidata.org/wiki/Q180711"
+          },
+          { "@type": "Thing", "name": "E-commerce", "sameAs": "https://www.wikidata.org/wiki/Q484847" },
+          { "@type": "Thing", "name": "Landing page", "sameAs": "https://www.wikidata.org/wiki/Q1494741" },
+          { "@type": "Thing", "name": "Design UX", "sameAs": "https://www.wikidata.org/wiki/Q11248500" },
+          "Intégration de l'intelligence artificielle"
+        ],
+        "knowsLanguage": "fr",
+        "sameAs": ["https://www.instagram.com/kalion.studio/"],
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
-          "name": "Création de sites web",
+          "@id": "%SITE_URL%/#tarifs",
+          "name": "Tarifs Kalion Studio",
+          "url": "%SITE_URL%/#tarifs",
           "itemListElement": [
-            { "@type": "Offer", "name": "Site vitrine — achat unique", "price": "750", "priceCurrency": "EUR", "description": "Site vitrine sur-mesure jusqu'à 3 pages, livré en 5 à 7 jours." },
-            { "@type": "Offer", "name": "Site vitrine — abonnement tout compris", "price": "450", "priceCurrency": "EUR", "description": "450 € à la commande puis 28 € par mois : hébergement, nom de domaine, modifications illimitées, maintenance." },
-            { "@type": "Offer", "name": "Projet sur-mesure", "description": "Boutique en ligne, espace client, tableau de bord : sur devis, livré en 1 à 3 semaines." }
+            {
+              "@type": "Offer",
+              "@id": "%SITE_URL%/#offre-achat-unique",
+              "name": "Site vitrine — achat unique",
+              "description": "Site vitrine sur-mesure jusqu'à 3 pages, livré en 5 à 7 jours, payé une seule fois : il vous appartient. Hébergement (~60 €/an) et nom de domaine (~15 €/an) à votre charge, modifications à 40 € l'unité, maintenance et support pendant 2 semaines, sans engagement.",
+              "price": "750",
+              "priceCurrency": "EUR",
+              "url": "%SITE_URL%/#tarifs",
+              "itemOffered": { "@id": "%SITE_URL%/#site-vitrine" },
+              "offeredBy": { "@id": "%SITE_URL%/#studio" },
+              "deliveryLeadTime": { "@type": "QuantitativeValue", "minValue": 5, "maxValue": 7, "unitCode": "DAY", "unitText": "jours" },
+              "addOn": {
+                "@type": "Offer",
+                "@id": "%SITE_URL%/#offre-page-supplementaire",
+                "name": "Page supplémentaire",
+                "description": "Page ajoutée à un site vitrine au-delà de 3 pages.",
+                "price": "150",
+                "priceCurrency": "EUR",
+                "offeredBy": { "@id": "%SITE_URL%/#studio" }
+              }
+            },
+            {
+              "@type": "Offer",
+              "@id": "%SITE_URL%/#offre-abonnement",
+              "name": "Site vitrine — abonnement tout compris",
+              "description": "450 € à la commande puis 28 € par mois, 6 mois minimum. Inclus : hébergement, nom de domaine offert, modifications illimitées, maintenance et support en continu, mises à jour de sécurité.",
+              "price": "450",
+              "priceCurrency": "EUR",
+              "priceSpecification": [
+                { "@type": "UnitPriceSpecification", "name": "À la commande", "price": "450", "priceCurrency": "EUR" },
+                {
+                  "@type": "UnitPriceSpecification",
+                  "name": "Abonnement mensuel",
+                  "price": "28",
+                  "priceCurrency": "EUR",
+                  "priceComponentType": "https://schema.org/Subscription",
+                  "unitCode": "MON",
+                  "unitText": "mois",
+                  "referenceQuantity": { "@type": "QuantitativeValue", "value": 1, "unitCode": "MON" },
+                  "billingDuration": { "@type": "QuantitativeValue", "minValue": 6, "unitCode": "MON" }
+                }
+              ],
+              "url": "%SITE_URL%/#tarifs",
+              "itemOffered": { "@id": "%SITE_URL%/#site-vitrine" },
+              "offeredBy": { "@id": "%SITE_URL%/#studio" },
+              "deliveryLeadTime": { "@type": "QuantitativeValue", "minValue": 5, "maxValue": 7, "unitCode": "DAY", "unitText": "jours" },
+              "addOn": { "@id": "%SITE_URL%/#offre-page-supplementaire" }
+            },
+            {
+              "@type": "Offer",
+              "@id": "%SITE_URL%/#offre-sur-mesure",
+              "name": "Projet sur-mesure",
+              "description": "Sur devis, livré en 1 à 3 semaines : boutique en ligne et paiement, espace client et authentification, dashboard d'administration, IA intégrée.",
+              "priceSpecification": { "@type": "PriceSpecification", "priceCurrency": "EUR", "description": "Sur devis" },
+              "url": "%SITE_URL%/#tarifs",
+              "itemOffered": { "@id": "%SITE_URL%/#sur-mesure" },
+              "offeredBy": { "@id": "%SITE_URL%/#studio" },
+              "deliveryLeadTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 3,
+                "unitCode": "WEE",
+                "unitText": "semaines"
+              }
+            }
           ]
         }
+      },
+      {
+        "@type": "Service",
+        "@id": "%SITE_URL%/#site-vitrine",
+        "name": "Création de site vitrine",
+        "serviceType": "Création de site internet vitrine",
+        "description": "Site vitrine 100 % sur-mesure, jusqu'à 3 pages, pour présenter votre activité et vos services et être trouvé sur Google. Design unique, responsive mobile, optimisation SEO et formation à la prise en main inclus. Livré en 5 à 7 jours.",
+        "provider": { "@id": "%SITE_URL%/#studio" },
+        "offers": [{ "@id": "%SITE_URL%/#offre-achat-unique" }, { "@id": "%SITE_URL%/#offre-abonnement" }]
+      },
+      {
+        "@type": "Service",
+        "@id": "%SITE_URL%/#sur-mesure",
+        "name": "Projet web sur-mesure",
+        "serviceType": "Développement de site et d'application web sur-mesure",
+        "description": "Boutique en ligne et paiement, espace client et authentification, dashboard d'administration, IA intégrée. Sur devis, livré en 1 à 3 semaines.",
+        "provider": { "@id": "%SITE_URL%/#studio" },
+        "offers": { "@id": "%SITE_URL%/#offre-sur-mesure" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "%SITE_URL%/#faq",
+        "name": "Questions fréquentes — Kalion Studio",
+        "inLanguage": "fr-FR",
+        "isPartOf": { "@id": "%SITE_URL%/#webpage" },
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Que devient mon site si j'arrête l'abonnement ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Le site est mis hors ligne à la fin du mois en cours. Vous pouvez à tout moment basculer vers l'achat unique en réglant le solde de 300 € : le site devient alors définitivement le vôtre et nous vous transférons l'ensemble des fichiers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Qui est propriétaire du site ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "En achat unique, vous êtes propriétaire du site et de son code dès le paiement final : nom de domaine, contenus et fichiers vous appartiennent. En abonnement, vous êtes propriétaire de vos contenus et de votre nom de domaine, et nous restons responsables de l'hébergement et du code tant que l'abonnement est actif."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Qu'est-ce qui compte comme une modification ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Inclus : changer un texte, remplacer une photo, mettre à jour un tarif, ajouter un témoignage, modifier vos horaires ou vos coordonnées, corriger un lien. Non inclus : la création d'une nouvelle page (150 €), une refonte graphique complète, ou l'ajout d'une fonctionnalité technique (paiement, espace client, réservation) qui fait l'objet d'un devis à part."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Combien de temps pour livrer mon site ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "5 à 7 jours pour un site vitrine, 1 à 3 semaines pour un projet sur-mesure."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Puis-je passer d'une formule à l'autre ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Oui. À tout moment vous pouvez passer de l'abonnement à l'achat unique en réglant le solde de 300 €. L'inverse est également possible : nous reprenons alors la gestion technique de votre site existant dans le cadre de l'abonnement."
+            }
+          }
+        ]
       }
     ]
   }
@@ -107,7 +306,7 @@
 
   <!-- ============ PRELOADER ============ -->
   <!-- the logo (ink, on ivory) and a counter that rises from 0 to 100 -->
-  <div class="loader" aria-hidden="true">
+  <div class="loader" aria-hidden="true" data-nosnippet>
     <div class="loader__brand">
       <svg class="loader__logo" xmlns="http://www.w3.org/2000/svg" viewBox="60 60 1320 430.2" focusable="false"><g transform="translate(44 339.8)"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="#100C0A"/><path d="M881.96 150.4L881.96 150.4Q859.24 150.4 847.48 140.64Q835.72 130.88 835.72 114.88L835.72 114.88L835.72 113.92L847.24 113.92L847.24 116Q847.24 127.84 855.4 133.76Q863.56 139.68 881.96 139.68L881.96 139.68Q913.16 139.68 913.16 121.6L913.16 121.6Q913.16 112.96 907.88 108.8Q902.6 104.64 890.28 102.08L890.28 102.08L867.56 97.76Q853 94.88 844.6 88.32Q836.2 81.76 836.2 69.28L836.2 69.28Q836.2 57.12 847.08 48.56Q857.96 40 879.4 40L879.4 40Q901 40 912.04 49.92Q923.08 59.84 923.08 75.52L923.08 75.52L923.08 76.48L911.56 76.48L911.56 74.56Q911.56 62.72 903.64 56.72Q895.72 50.72 878.6 50.72L878.6 50.72Q847.72 50.72 847.72 68.48L847.72 68.48Q847.72 77.12 852.84 81.04Q857.96 84.96 870.6 87.68L870.6 87.68L893.16 92.16Q924.68 98.24 924.68 120.64L924.68 120.64Q924.68 133.12 913.8 141.76Q902.92 150.4 881.96 150.4M993.48 138.4L993.48 148.8L976.36 148.8Q950.6 148.8 950.6 123.68L950.6 123.68L950.6 79.52L936.52 79.52L936.52 69.76L950.6 69.76L950.6 50.88L962.12 50.88L962.12 69.76L993.48 69.76L993.48 79.52L962.12 79.52L962.12 124.32Q962.12 132.32 966.12 135.36Q970.12 138.4 979.08 138.4L979.08 138.4L993.48 138.4M1044.68 150.4L1044.68 150.4Q1028.52 150.4 1019.8 140.64Q1011.08 130.88 1011.08 116L1011.08 116L1011.08 69.76L1022.44 69.76L1022.44 114.24Q1022.44 140.16 1048.68 140.16L1048.68 140.16Q1063.08 140.16 1070.6 131.84Q1078.12 123.52 1078.12 108.16L1078.12 108.16L1078.12 69.76L1089.48 69.76L1089.48 148.8L1079.24 148.8L1079.24 124.16L1078.44 124.16Q1076.2 135.2 1067.4 142.8Q1058.6 150.4 1044.68 150.4M1148.2 150.4L1148.2 150.4Q1129.64 150.4 1119.24 139.04Q1108.84 127.68 1108.84 109.28Q1108.84 90.88 1119.08 79.52Q1129.32 68.16 1147.24 68.16L1147.24 68.16Q1160.84 68.16 1169.64 74.64Q1178.44 81.12 1181.16 91.84L1181.16 91.84L1181.96 91.84L1181.96 41.6L1193.32 41.6L1193.32 148.8L1182.92 148.8L1182.92 125.44L1182.28 125.44Q1179.4 137.28 1170.36 143.84Q1161.32 150.4 1148.2 150.4M1120.36 109.28L1120.36 109.28Q1120.36 125.6 1128.36 132.8Q1136.36 140 1151.08 140L1151.08 140Q1165.16 140 1173.56 132.24Q1181.96 124.48 1181.96 110.56L1181.96 110.56L1181.96 109.12Q1181.96 94.56 1173.72 86.64Q1165.48 78.72 1150.76 78.72L1150.76 78.72Q1120.36 78.72 1120.36 109.28M1229.32 41.6L1229.32 59.68L1217.96 59.68L1217.96 41.6L1229.32 41.6M1229.32 69.76L1229.32 148.8L1217.96 148.8L1217.96 69.76L1229.32 69.76M1292.68 150.4L1292.68 150.4Q1273.48 150.4 1261.64 138.88Q1249.8 127.36 1249.8 109.28Q1249.8 91.2 1261.64 79.68Q1273.48 68.16 1292.68 68.16L1292.68 68.16Q1312.04 68.16 1323.88 79.68Q1335.72 91.2 1335.72 109.28Q1335.72 127.36 1323.88 138.88Q1312.04 150.4 1292.68 150.4M1268.84 132.08Q1276.68 140.16 1292.68 140.16Q1308.68 140.16 1316.6 132.08Q1324.52 124 1324.52 109.28Q1324.52 94.56 1316.6 86.48Q1308.68 78.4 1292.68 78.4L1292.68 78.4Q1276.84 78.4 1268.92 86.48Q1261 94.56 1261 109.28Q1261 124 1268.84 132.08" fill="#100C0A"/><circle class="loader__orb" cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></g></svg>
       <div class="loader__count"><i class="loader__col loader__col--h"><b class="loader__strip loader__strip--h"><span></span><span>1</span></b></i><i class="loader__col"><b class="loader__strip loader__strip--t"><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></b></i><i class="loader__col"><b class="loader__strip loader__strip--u"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></b></i><span class="loader__pct">%</span></div>
@@ -115,7 +314,7 @@
   </div>
 
   <!-- a phone held sideways: the site is made to be held upright -->
-  <div class="rotate" aria-hidden="true">
+  <div class="rotate" aria-hidden="true" data-nosnippet>
     <svg class="rotate__k" viewBox="200 150 708 700" focusable="false"><defs><mask id="rotate-ring" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000"><rect width="1000" height="1000" fill="white"/><circle cx="406" cy="500" r="84" fill="black"/></mask></defs><path d="M200 150H322V850H200Z" fill="currentColor"/><g mask="url(#rotate-ring)"><path d="M445.74 543.61L877.59 150L702.41 150L366.26 456.39Z" fill="currentColor"/><path d="M366.26 543.61L702.41 850L877.59 850L445.74 456.39Z" fill="currentColor"/></g><circle cx="406" cy="500" r="56" fill="#FF5B24"/></svg>
     <p>Tournez votre téléphone</p>
   </div>
@@ -174,7 +373,7 @@
     </div>
   </div>
 
-  <div class="indicator mono" aria-hidden="true">
+  <div class="indicator mono" aria-hidden="true" data-nosnippet>
     <span class="indicator__num">00</span>
     <span class="indicator__line"></span>
     <span class="indicator__label">Accueil</span>
@@ -185,8 +384,8 @@
     <!-- ============ HERO ============ -->
     <section class="hero" id="top" data-tone="dark" data-label="Accueil" data-num="00">
       <div class="hero__pin">
-        <div class="hero__fallback" aria-hidden="true">Kalion<small>Studio</small></div>
-        <h1 class="sr-only">Kalion Studio, studio de webdesign indépendant basé en France. Des sites qui vous démarquent.</h1>
+        <div class="hero__fallback" aria-hidden="true">Kalion <small>Studio</small></div>
+        <h1 class="sr-only">Kalion Studio, studio de webdesign indépendant basé en France : création de sites internet sur-mesure. Des sites qui vous démarquent.</h1>
         <div class="hero__bottom">
           <a class="btn btn--ghost" href="#projets" data-scroll data-magnetic>
             <span class="btn__label">Voir nos projets</span>
@@ -200,7 +399,7 @@
     <section class="about" id="apropos" data-tone="dark" data-label="À propos" data-num="01">
       <div class="about__pin">
         <p class="about__text" data-manifesto>
-          Nous sommes <span class="brandword" data-keep><span class="sr-only">Kalion</span><svg class="brandword__svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="16 -279.8 1156.4 283.8"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="currentColor"/><circle cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></svg><span class="brandword__studio">Studio</span></span>, un studio indépendant basé en France, spécialisé dans le <u class="mark mark--under">webdesign<svg class="mark__stroke" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M1.5 9.8C42 6.4 112 4.2 198.6 5.6c1.9 0 2 2.6.1 2.8C121 9.4 62 11.6 3 13.4c-2.4.1-3.4-3.3-1.5-3.6Z"/></svg></u>. Nous créons des sites qui vous <em class="ink">démarquent.</em>
+          Nous sommes <span class="brandword" data-keep><span class="sr-only">Kalion </span><svg class="brandword__svg" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="16 -279.8 1156.4 283.8"><path d="M76 -103.2L76 0L16 0L16 -268L76 -268L76 -161.6L142.8 -161.6L214 -268L286 -268L192.8 -136L284.8 0L212.8 0L143.6 -103.2L76 -103.2M360.4 4L360.4 4Q328 4 309.6 -10.2Q291.2 -24.4 291.2 -49.6L291.2 -49.6Q291.2 -95.2 356 -102L356 -102L442 -110.8L442 -118.4Q442 -137.6 432.4 -144.6Q422.8 -151.6 398.4 -151.6L398.4 -151.6Q375.2 -151.6 365.4 -144.6Q355.6 -137.6 355.6 -120.8L355.6 -120.8L355.6 -119.2L295.2 -119.2L295.2 -120.4Q295.2 -158 324.4 -181.2Q353.6 -204.4 402.8 -204.4L402.8 -204.4Q451.6 -204.4 476.4 -181.2Q501.2 -158 501.2 -117.6L501.2 -117.6L501.2 0L445.2 0L445.2 -46L442 -46Q434.8 -22.4 414 -9.2Q393.2 4 360.4 4M351.6 -53.6L351.6 -53.6Q351.6 -38.4 377.6 -38.4L377.6 -38.4Q409.2 -38.4 425 -47Q440.8 -55.6 442 -76.4L442 -76.4L372.4 -68.4Q351.6 -66.8 351.6 -53.6M589.2 -268L589.2 0L529.2 0L529.2 -268L589.2 -268M678.4 -200.4L678.4 0L618.4 0L618.4 -200.4L678.4 -200.4M897.4 -24.4Q866 4 814.4 4Q762.8 4 731.4 -24.4Q700 -52.8 700 -100L700 -100Q700 -147.6 731.4 -176Q762.8 -204.4 814.4 -204.4Q866 -204.4 897.4 -176Q928.8 -147.6 928.8 -100L928.8 -100Q928.8 -52.8 897.4 -24.4M772 -61.2Q784.4 -49.2 814.4 -49.2Q844.4 -49.2 856.8 -61.2Q869.2 -73.2 869.2 -100Q869.2 -126.8 856.6 -139.2Q844 -151.6 814.4 -151.6L814.4 -151.6Q784.4 -151.6 772 -139.4Q759.6 -127.2 759.6 -100L759.6 -100Q759.6 -73.2 772 -61.2M1010.8 -101.2L1010.8 0L950.8 0L950.8 -200.4L1006.4 -200.4L1006.4 -138.8L1010 -138.8Q1014.4 -166.8 1034.6 -185.6Q1054.8 -204.4 1091.6 -204.4L1091.6 -204.4Q1131.2 -204.4 1151.8 -182.2Q1172.4 -160 1172.4 -124.8L1172.4 -124.8L1172.4 0L1112.4 0L1112.4 -104.8Q1112.4 -129.2 1101 -139.8Q1089.6 -150.4 1062.4 -150.4L1062.4 -150.4Q1034.4 -150.4 1022.6 -138.8Q1010.8 -127.2 1010.8 -101.2L1010.8 -101.2" fill="currentColor"/><circle cx="648.4" cy="-244.4" r="35.4" fill="#FF5B24"/></svg><span class="brandword__studio">Studio</span></span>, un studio indépendant basé en France, spécialisé dans le <u class="mark mark--under">webdesign<svg class="mark__stroke" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M1.5 9.8C42 6.4 112 4.2 198.6 5.6c1.9 0 2 2.6.1 2.8C121 9.4 62 11.6 3 13.4c-2.4.1-3.4-3.3-1.5-3.6Z"/></svg></u>. Nous créons des sites qui vous <em class="ink">démarquent.</em>
         </p>
         <p class="about__sub" data-manifesto>
           Pas de <s class="mark mark--strike"><span class="mark__txt">template recyclé</span><svg class="mark__stroke" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M1.4 10.6C52 8.8 128 5.6 198.4 3.4c1.9-.1 2.2 2.6.3 2.9C130 9 62 12.6 3 14.2c-2.4.1-3.5-3.4-1.6-3.6Z"/></svg></s>, un design <em>travaillé</em> qui plaît à vos visiteurs, à Google et à vous.
@@ -279,7 +478,7 @@
 
             <a class="pcard" href="https://k3ntax.com/" target="_blank" rel="noopener">
               <div class="pcard__media">
-                <img src="/img/projects/k3ntax.webp" alt="Site portfolio K3nTax.com" />
+                <img src="/img/projects/k3ntax.webp" alt="Page d'accueil du portfolio K3nTax.com, site de montage vidéo réalisé par Kalion Studio" />
                 <span class="pcard__go mono">Voir le site ↗</span>
               </div>
               <div class="pcard__info">
@@ -294,7 +493,7 @@
 
             <a class="pcard" href="https://www.the328project.com/" target="_blank" rel="noopener">
               <div class="pcard__media">
-                <img src="/img/projects/the328.webp" alt="Site vitrine The 328 Project" />
+                <img src="/img/projects/the328.webp" alt="Site vitrine The 328 Project, location d'une Ferrari 328 GTS, réalisé par Kalion Studio" />
                 <span class="pcard__go mono">Voir le site ↗</span>
               </div>
               <div class="pcard__info">
@@ -309,7 +508,7 @@
 
             <a class="pcard" href="https://by-esperelles.com/" target="_blank" rel="noopener">
               <div class="pcard__media">
-                <img src="/img/projects/esperelles.webp" alt="Boutique en ligne By Esperelles" />
+                <img src="/img/projects/esperelles.webp" alt="Boutique en ligne de bijoux artisanaux By Esperelles, réalisée par Kalion Studio" />
                 <span class="pcard__go mono">Voir le site ↗</span>
               </div>
               <div class="pcard__info">
@@ -324,7 +523,7 @@
 
             <a class="pcard" href="https://www.distrib-sud.com/" target="_blank" rel="noopener">
               <div class="pcard__media">
-                <img src="/img/projects/distribsud.webp" alt="Site e-commerce Distrib-Sud" />
+                <img src="/img/projects/distribsud.webp" alt="Site e-commerce Distrib-Sud, vente de distributeurs, réalisé par Kalion Studio" />
                 <span class="pcard__go mono">Voir le site ↗</span>
               </div>
               <div class="pcard__info">
@@ -362,7 +561,7 @@
           </div>
         </div>
 
-        <div class="projects__hud mono">
+        <div class="projects__hud mono" data-nosnippet>
           <div class="projects__hud-count"><span data-pcount>01</span><em>/ 04</em></div>
           <div class="projects__hud-bar"><span></span></div>
         </div>
@@ -600,7 +799,11 @@
         </div>
 
         <div class="letter">
-          <form class="form" novalidate>
+          <!-- sent to Netlify Forms (main.js posts it; the mail app opens instead if that fails) -->
+          <form class="form" name="devis" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+            <input type="hidden" name="form-name" value="devis" />
+            <!-- (a trap for spam robots: hidden from people and screen readers, left empty) -->
+            <p class="sr-only" aria-hidden="true" data-nosnippet><label>Ne pas remplir : <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
             <div class="fold fold--1">
               <div class="fold__face">
                 <div class="form__row">
@@ -686,7 +889,7 @@
         </div>
         <div class="footer__col">
           <span class="mono">Nous contacter</span>
-          <a href="https://wa.me/33658234103" target="_blank" rel="noopener">Téléphone</a>
+          <a href="https://wa.me/33658234103" target="_blank" rel="noopener">WhatsApp</a>
           <a href="mailto:contact@kalionstudio.com">Mail</a>
           <button type="button" data-copy="k3ntax">Discord</button>
           <a href="https://t.me/K3nTax" target="_blank" rel="noopener">Telegram</a>
@@ -713,7 +916,7 @@
   <i class="fly-drop" aria-hidden="true"></i>
 
   <div class="more-lip" aria-hidden="true"></div>
-  <div class="more-morph mono" aria-hidden="true"><span class="more-morph__a">Ouvrir ↗</span><span class="more-morph__b">Fermer <b>✕</b></span></div>
+  <div class="more-morph mono" aria-hidden="true" data-nosnippet><span class="more-morph__a">Ouvrir ↗</span><span class="more-morph__b">Fermer <b>✕</b></span></div>
   <div class="more" id="more" role="dialog" aria-modal="true" aria-labelledby="more-title" hidden data-lenis-prevent>
     <div class="more__inner">
       <header class="more__head">
@@ -724,7 +927,7 @@
       <ul class="more__grid">
         <li>
           <a class="mtile" href="https://appart108.fr/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/appart108.webp" alt="Site immobilier Appart108" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__media"><img src="/img/projects/appart108.webp" alt="Site de vente immobilière Appart108, réalisé par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">05</span>
               <div>
@@ -736,7 +939,7 @@
         </li>
         <li>
           <a class="mtile" href="https://cleansignatures.com/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/cleansignatures.webp" alt="Site Clean Signatures" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__media"><img src="/img/projects/cleansignatures.webp" alt="Site de Clean Signatures, nettoyage automobile, réalisé par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">06</span>
               <div>
@@ -747,8 +950,8 @@
           </a>
         </li>
         <li>
-          <a class="mtile" href="https://hyperion-software.lovable.app/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/hyperion.webp" alt="Site Hyperion Software" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+          <a class="mtile" href="https://www.hyperion-soft.eu/" target="_blank" rel="noopener">
+            <div class="mtile__media"><img src="/img/projects/hyperion.webp" alt="Site d'Hyperion Software, solution logicielle SaaS, réalisé par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">07</span>
               <div>
@@ -760,7 +963,7 @@
         </li>
         <li>
           <a class="mtile" href="https://altysproprete.com/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/altys.webp" alt="Site vitrine Altys Propreté" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__media"><img src="/img/projects/altys.webp" alt="Site vitrine Altys Propreté, nettoyage de maisons et de jardins, réalisé par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">08</span>
               <div>
@@ -772,7 +975,7 @@
         </li>
         <li>
           <a class="mtile" href="https://batirenoisolation.com/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/batireno.webp" alt="Landing page Bâtireno Isolation" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__media"><img src="/img/projects/batireno.webp" alt="Landing page Bâtireno Isolation, rénovation et isolation en Île-de-France, réalisée par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">09</span>
               <div>
@@ -784,7 +987,7 @@
         </li>
         <li>
           <a class="mtile" href="https://crypto-hub.fr/" target="_blank" rel="noopener">
-            <div class="mtile__media"><img src="/img/projects/cryptohub.webp" alt="Plateforme Crypto-Hub" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
+            <div class="mtile__media"><img src="/img/projects/cryptohub.webp" alt="Plateforme Crypto-Hub dédiée aux cryptomonnaies, réalisée par Kalion Studio" loading="lazy" /><span class="pcard__go mono">Voir le site ↗</span></div>
             <div class="mtile__info">
               <span class="mtile__idx mono">10</span>
               <div>

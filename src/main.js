@@ -247,6 +247,23 @@ function initQuality() {
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
+// A link straight to a section (kalionstudio.com/#tarifs): the opening plays at the top as
+// always, then the page travels there as the menu's links do (goToDeepLink). Until then the
+// browser must not jump to it by itself — it does while the page loads, and the opening would
+// play in the middle of the page. (Never once public/boot-guard.js has opened the page itself.)
+const deepLink =
+  location.hash.length > 1 && location.hash !== '#top' && $$('[data-scroll]').some((a) => a.getAttribute('href') === location.hash) ? location.hash : null;
+const holdTop = () => {
+  if (root.classList.contains('boot-fallback')) window.removeEventListener('scroll', holdTop);
+  else if (window.scrollY) window.scrollTo(0, 0);
+};
+if (deepLink) window.addEventListener('scroll', holdTop, { passive: true });
+function goToDeepLink() {
+  if (!deepLink) return;
+  window.removeEventListener('scroll', holdTop);
+  scrollToTarget(deepLink);
+}
+
 /* ------------------------------------------------------------------
    Smooth scroll
 ------------------------------------------------------------------ */
@@ -435,6 +452,8 @@ function initNav() {
     else if (direction === 1) nav.classList.add('is-hidden');
     else if (direction === -1) nav.classList.remove('is-hidden');
   });
+  // (the keyboard reaching it while it is away: it comes back)
+  nav.addEventListener('focusin', () => nav.classList.remove('is-hidden'));
 }
 
 // Phone menu: the page opens from the button as a growing circle (like "Découvrir plus"),
@@ -883,6 +902,7 @@ function playIntro() {
       lenis.start();
       el.remove();
       if (quality.arm) quality.arm();
+      goToDeepLink(); // (a link to a section: on to it, now that the page is open)
     }, UI + 0.3);
   if (FAST) tl.progress(1);
 }
@@ -983,6 +1003,8 @@ function initHero() {
   });
   tl.to('.hero__bottom', { y: -60, opacity: 0, ease: 'power2.in', duration: 0.14 }, 0).to({}, { duration: 0.86 });
   syncGL();
+  // keyboard (see initKeyboard): the button is only there at the very top
+  focusSpot($$('.hero__bottom .btn'), () => 0, () => scrollPos < 4);
 }
 
 /* ------------------------------------------------------------------
@@ -1251,6 +1273,19 @@ function initPillars() {
       lenis.scrollTo(pin.start + holdAt[i] * (pin.end - pin.start), { duration: 1.8, easing: (t) => 1 - Math.pow(1 - t, 4) });
     })
   );
+  // keyboard (see initKeyboard): the rail is there during the flight; a stop of it is reached
+  // where its engagement is read
+  focusSpot(
+    railBtns,
+    (el) => pin.start + holdAt[railBtns.indexOf(el)] * (pin.end - pin.start),
+    () => railOn,
+    () => {
+      cur = target;
+      const on = cur > 0.55 && cur < 7.6; // (as in the frame below)
+      setRail(on);
+      if (on) railTl.progress(1);
+    }
+  );
 
   gsap.ticker.add((time, deltaMS) => {
     if (!visible) return;
@@ -1354,6 +1389,12 @@ function initProjects() {
     onRefresh: measure,
   });
   projectsGalleryY = () => pin.start + vp.h * INTRO;
+  // keyboard (see initKeyboard): a card is reached in the middle of the screen, the gallery in place
+  focusSpot(
+    cards,
+    (el) => pin.start + vp.h * INTRO + clamp(centers[cards.indexOf(el)] - vp.w / 2, 0, dist),
+    () => scrollPos >= pin.start + vp.h * (INTRO - 0.05) && scrollPos <= pin.end
+  );
   ScrollTrigger.create({
     trigger: section,
     start: 'top bottom',
@@ -1720,8 +1761,23 @@ function initReviews() {
         { top: 0.41, speed: 26 },
         { top: 0.67, speed: -26 },
       ];
-  // (the second row starts half a card further: the two rows sit in quincunx)
+  // (computer: the second row starts half a card further, the two rows sit in quincunx)
   const drift = ROWS.map((r, i) => ({ off: i * (rvgl.rowPer || 0) * 0.5 }));
+  // Phone: a row shows a card or two, and the rows drift opposite ways — with any fixed
+  // offset, a review would sooner or later be on screen in both rows at once. There the
+  // second row is the first one backwards (ReviewsScene.setRows) and both drift on one clock
+  // (`phase`): the two copies of a review then only ever meet at two fixed points, half a loop
+  // apart. They are kept a quarter of a loop to either side of the screen (the rows' offsets
+  // always add up to twinSum): the same review is never on screen twice.
+  let phase = 0;
+  const twinSum = (D) => {
+    const { rowPer: per, rowCard: card, rowLoop: loop, rowCount: n } = rvgl;
+    // card k's left edge sits at k·per + gap/2 on its row; on screen, at that minus the row's
+    // offset. Two copies of review j: k = j and n−1−j, so their left edges always add up to
+    // (n−1)·per + gap − (sum of the offsets). Both can be seen only when that sum (mod loop)
+    // falls in (−2·card, 2·width): it is set to the middle of the rest.
+    return (n - 1) * per + (per - card) - (vp.w - card + loop / 2) - 2 * D;
+  };
   const U = rvgl.uniforms;
 
   const st = { u: -1, px: 0, py: 0 };
@@ -1730,6 +1786,7 @@ function initReviews() {
     window.__rv = {
       st,
       pin,
+      scene: rvgl,
       shot: async (name) => {
         await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
         rvgl.render(gsap.ticker.time);
@@ -1754,6 +1811,7 @@ function initReviews() {
     const vh = vp.h;
     const u = (scrollPos - pin.start) / vh;
     const on = u > -0.05 && u < TOTAL + 0.02; // afterwards the tarifs cover it
+    if (!on) css(section, 'pointerEvents', u < 0 ? 'none' : '');
     if (on !== visible) {
       visible = on;
       rvgl.active = on;
@@ -1769,6 +1827,8 @@ function initReviews() {
 
     // the liquid rises from the bottom and swallows the gallery; we stay under its surface
     U.uLevel.value = lerp(-0.62, 0.68, smoothstep(0, 0.78, s));
+    // (until its surface reaches mid-screen the gallery's last card stays clickable through it)
+    css(section, 'pointerEvents', U.uLevel.value < 0 ? 'none' : '');
     // leaving is read on the raw scroll, in step with the tarifs that take over
     const ring = seg(u, LEAVE + 0.22, LEAVE + 0.52); // the ring folds back into the sphere
     const calm = seg(u, LEAVE + 0.3, LEAVE + 0.58); // the underwater light goes
@@ -1852,7 +1912,11 @@ function initReviews() {
       const tIn = seg(s, 1.3 + 0.08 * i, 1.85 + 0.08 * i);
       const tOut = seg(u, LEAVE + 0.05 * i, LEAVE + 0.3 + 0.05 * i);
       const reveal = D * (easeOut3(tIn) - tOut * tOut * tOut);
-      drift[i].off += r.speed * dt * smoothstep(0.9, 1, tIn);
+      if (MOBILE) {
+        // (one clock for both rows, see twinSum; the rows' own reveal adds D to each at rest)
+        if (i === 0) phase += r.speed * dt * smoothstep(0.9, 1, tIn);
+        drift[i].off = i ? twinSum(D) - phase : phase;
+      } else drift[i].off += r.speed * dt * smoothstep(0.9, 1, tIn);
       const blur = 2.2 * (tIn > 0 ? (1 - tIn) * (1 - tIn) : 0) + 2.2 * tOut * tOut;
       drift[i].show = blur > 0.001 ? drift[i].off + reveal : snap(drift[i].off + reveal);
       drift[i].front = MOBILE ? reveal : srcPx - reveal;
@@ -1959,6 +2023,18 @@ function initPricing() {
     invalidateOnRefresh: true,
   });
   pricingY = () => pin.start + vp.h * (LAND + 0.2);
+  // keyboard (see initKeyboard): the formulas' buttons, while their question is asked
+  const uNow = () => (scrollPos - pin.start) / vp.h;
+  focusSpot(
+    [vitrine, mesure].flatMap((el) => controlsOf(el)),
+    () => pin.start + vp.h * (Q1 + 0.6),
+    () => uNow() > Q1 + 0.42 && uNow() < Q2 - 0.1
+  );
+  focusSpot(
+    [...[once, sub].flatMap((el) => controlsOf(el)), mini],
+    () => pin.start + vp.h * (Q2 + 0.75),
+    () => uNow() > Q2 + 0.47 && uNow() < OUT - 0.02
+  );
   // dev only: lets the preview tests grab a frame of the drops
   if (import.meta.env.DEV) {
     window.__pr = {
@@ -2467,8 +2543,56 @@ function initContact() {
   });
   level();
 
-  form.addEventListener('submit', (e) => {
+  // The request is posted to the site itself (Netlify Forms: the form is declared in
+  // index.html). If that fails — no network, or the forms not switched on in Netlify yet (it
+  // then answers 404/405, or the page itself) — the visitor's mail app opens with the request
+  // written out, as before.
+  const mailto = (data) => {
+    const subject = `Demande de devis — ${data.get('type')}`;
+    const body = [
+      `Nom : ${data.get('name')}`,
+      `Email : ${data.get('email')}`,
+      `Type de projet : ${data.get('type')}`,
+      `Budget : ${data.get('budget')}`,
+      '',
+      String(data.get('message')),
+    ].join('\n');
+    window.location.href = `mailto:contact@kalionstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    toast('Votre messagerie s’ouvre avec votre demande');
+  };
+  const post = async (data) => {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(data).toString(),
+        signal: ctl.signal,
+      });
+      if (!res.ok) return false;
+      // (Netlify answers a received form with its own short page; the page itself coming back
+      // — data-netlify still in it — means nothing took the form)
+      const text = await res.text();
+      return !text.includes('data-netlify');
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+  // after a send: the form as it was at first (the chips' drops go back, the button empties)
+  const resetForm = () => {
+    form.reset();
+    $$('.field.is-error', form).forEach((f) => f.classList.remove('is-error'));
+    $$('.chips', form).forEach((g) => g.dispatchEvent(new Event('change')));
+    level();
+  };
+  let sending = false;
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (sending) return;
     const data = new FormData(form);
     let ok = true;
     ['name', 'email', 'message'].forEach((k) => {
@@ -2482,17 +2606,20 @@ function initContact() {
       toast('Merci de compléter les champs indiqués');
       return;
     }
-    const subject = `Demande de devis — ${data.get('type')}`;
-    const body = [
-      `Nom : ${data.get('name')}`,
-      `Email : ${data.get('email')}`,
-      `Type de projet : ${data.get('type')}`,
-      `Budget : ${data.get('budget')}`,
-      '',
-      String(data.get('message')),
-    ].join('\n');
-    window.location.href = `mailto:contact@kalionstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    toast('Votre messagerie s’ouvre avec votre demande');
+    // (the hidden spam trap filled in: a robot — nothing is sent)
+    if (String(data.get('bot-field') || '').trim()) {
+      toast('Merci ! Votre demande est envoyée, réponse sous 24 h.');
+      resetForm();
+      return;
+    }
+    sending = true;
+    send.setAttribute('aria-busy', 'true');
+    const sent = await post(data);
+    sending = false;
+    send.removeAttribute('aria-busy');
+    if (!sent) return mailto(data);
+    toast('Merci ! Votre demande est envoyée, réponse sous 24 h.');
+    resetForm();
   });
 
   initContactScene();
@@ -2535,6 +2662,20 @@ function initContactMobile() {
   measure();
   ScrollTrigger.addEventListener('refresh', measure);
   contactY = () => titleY - 96;
+  // keyboard (see initKeyboard): a control is reached in the middle of the screen, the letter
+  // far enough up for its flap to be open (see lp below: the top flap opens at 0.65, the
+  // bottom one at 0.95)
+  focusSpot(
+    controlsOf($('.contact')),
+    (el) => {
+      const box = drawnBy(el);
+      const f = el.closest('.fold--1, .fold--3');
+      const mid = layoutTop(letter) + letter.offsetHeight / 2;
+      const open = f ? mid - vp.h * (f.classList.contains('fold--1') ? 0.7 : 0.46) : -Infinity;
+      return Math.max(layoutTop(box) + box.offsetHeight / 2 - vp.h * 0.5, open);
+    },
+    unfolded
+  );
   const turn = (fold, angle, z) => {
     const a = Math.abs(angle) < 0.05 ? 0 : angle;
     css(fold, 'transform', a ? `translateZ(${z}px) rotateX(${a.toFixed(2)}deg)` : 'none');
@@ -2622,6 +2763,8 @@ function initContactScene() {
   });
   contactY = () => pin.end;
   if (import.meta.env.DEV) window.__ct = { pin }; // dev only: lets the preview tests jump to a moment
+  // keyboard (see initKeyboard): the ways to reach us and the letter, once it is open
+  focusSpot(controlsOf(section), () => contactY(), (el) => scrollPos >= contactY() - 2 && unfolded(el));
   // the drop leaves the FAQ once its drip has reached the last question
   const faqEnd = ScrollTrigger.create({ trigger: '.faq__list', start: 'bottom 62%' });
 
@@ -2732,6 +2875,111 @@ function initFooterReveal() {
 }
 
 /* ------------------------------------------------------------------
+   Keyboard — the scenes show their controls at one moment of their
+   choreography only (hidden, see-through or folded the rest of the time):
+   the browser's Tab would skip them, or land on them unseen. When Tab
+   (or Shift+Tab) heads for one, the page is brought straight (no
+   animation) to where that control is shown, and the focus goes to it
+   once it is. Pointers and fingers never go through here.
+------------------------------------------------------------------ */
+// { els, at(el): the scroll position where el is shown, ready(el): it is there now,
+//   snap(): (optional) after the jump, the scene catches up at once instead of easing there }
+const focusSpots = [];
+const focusSpot = (els, at, ready = () => true, snap = null) => focusSpots.push({ els, at, ready, snap });
+const TABBABLE = 'a[href], button, input, select, textarea, [tabindex]';
+const controlsOf = (box) => $$(TABBABLE, box).filter((el) => el.tabIndex >= 0 && el.type !== 'hidden');
+// the place in the page as laid out (the scenes' transforms left out)
+const layoutTop = (el) => {
+  let y = 0;
+  for (let e = el; e; e = e.offsetParent) y += e.offsetTop;
+  return y;
+};
+// (an option of the form is drawn by its label: the radio itself is invisible)
+const drawnBy = (el) => (el.type === 'radio' && el.parentElement ? el.parentElement : el);
+// a control of the letter: its flap is open
+const unfolded = (el) => {
+  const f = el.closest('.fold');
+  return !f || getComputedStyle(f).transform === 'none';
+};
+
+function initKeyboard() {
+  // seen: drawn, opaque enough, inside the screen
+  const shown = (el) => {
+    const box = drawnBy(el);
+    if (getComputedStyle(box).visibility !== 'visible') return false;
+    let op = 1;
+    for (let e = box; e && e !== document.body; e = e.parentElement) op *= +getComputedStyle(e).opacity;
+    if (op < 0.75) return false;
+    const b = box.getBoundingClientRect();
+    return b.width > 0 && b.top >= -1 && b.left >= -1 && b.bottom <= window.innerHeight + 1 && b.right <= window.innerWidth + 1;
+  };
+  // the page's Tab order, the controls the scenes hide included (a group of options: one
+  // stop, the chosen one)
+  const order = () =>
+    $$(TABBABLE).filter((el) => {
+      if (el.tabIndex < 0 || el.disabled || el.type === 'hidden' || el.closest('[hidden], [inert]') || !el.getClientRects().length) return false;
+      if (el.type === 'radio' && !el.checked && el.form && [...el.form.elements].some((r) => r.name === el.name && r.checked)) return false;
+      return true;
+    });
+  const spotOf = (el) => focusSpots.find((s) => s.els.includes(el));
+  const after = (a, b) => !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING); // b comes after a
+
+  // the footer: its texts come in once it is half up the screen (initFooterReveal)
+  const footer = $('.footer');
+  focusSpot(controlsOf(footer), (el) => Math.max(layoutTop(footer) - vp.h * 0.5, layoutTop(el) + el.offsetHeight + 40 - vp.h));
+
+  let pending = null; // the control waiting to show
+  let cursor = null; // where Tab goes on from, when the focus could not follow
+  let anchor = null; // where the last click landed (Tab goes on from there)
+  window.addEventListener(
+    'pointerdown',
+    (e) => {
+      pending = cursor = null;
+      anchor = e.target instanceof Element ? e.target : null;
+    },
+    true,
+  );
+  document.addEventListener('focusin', () => (cursor = anchor = null));
+  window.addEventListener(
+    'keydown',
+    (e) => {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || e.defaultPrevented) return;
+      // (the phone menu, the projects panel, the opening: the browser's own order)
+      if (menu.open || lenis.isStopped) return;
+      const active = document.activeElement;
+      const from = (pending && pending.el) || cursor || (active && active !== document.body && active !== root ? active : anchor);
+      if (!from || from === document.body || from === root) return;
+      const list = order();
+      const i = list.indexOf(from);
+      const next =
+        i >= 0 ? list[i + (e.shiftKey ? -1 : 1)] : e.shiftKey ? list.filter((el) => after(el, from)).pop() : list.find((el) => after(from, el));
+      const spot = next && spotOf(next);
+      if (!spot || (spot.ready(next) && shown(next))) {
+        pending = null;
+        return; // (an ordinary control, or one already in view: the browser's own Tab)
+      }
+      e.preventDefault();
+      const go = { el: next };
+      pending = go;
+      lenis.scrollTo(clamp(spot.at(next), 0, ScrollTrigger.maxScroll(window)), { immediate: true, force: true });
+      if (spot.snap) spot.snap();
+      const t0 = performance.now();
+      const settle = () => {
+        if (pending !== go) return; // (another Tab since)
+        const ok = spot.ready(next) && shown(next);
+        if (!ok && performance.now() - t0 < 1500) return requestAnimationFrame(settle);
+        pending = null;
+        next.focus({ preventScroll: true });
+        // (it could not take the focus: the next Tab goes on from it all the same)
+        if (document.activeElement !== next) cursor = next;
+      };
+      requestAnimationFrame(settle);
+    },
+    true
+  );
+}
+
+/* ------------------------------------------------------------------
    Boot
 ------------------------------------------------------------------ */
 // lets the browser paint (the preloader) before the next heavy step
@@ -2802,6 +3050,7 @@ async function boot() {
   initResizeKeep();
   syncGL();
   initFooterReveal();
+  initKeyboard();
   await nextFrame();
 
   // everything is ready: the counter runs to 100 (the logo stays at least a moment), and
@@ -2826,6 +3075,7 @@ function openWithoutIntro() {
   navIn();
   lenis.start();
   if (quality.arm) quality.arm();
+  goToDeepLink();
 }
 
 boot();

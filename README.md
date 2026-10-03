@@ -67,13 +67,14 @@ Les fichiers de la marque (logos, symbole K, planche d'identité) sont rangés h
 - `src/gl/DropsScene.js` : les gouttes des tarifs
 - `public/img/projects/` : captures des sites clients (1600×1000, webp)
 - `public/` : icônes (favicon, iPhone, Android), `site.webmanifest`, `og-image.jpg` (aperçu des liens partagés)
-- `vite.config.js` : les pages à construire, l'adresse du site, `robots.txt` et `sitemap.xml`
+- `vite.config.js` : les pages à construire, l'adresse du site, `robots.txt` et `sitemap.xml` (date de dernière modification de chaque page, à mettre à jour quand son contenu change)
+- `public/llms.txt` : le résumé du studio pour les assistants IA ; `public/63f0410dacbb4523fae0e5ef9a32d152.txt` : la clé IndexNow (Bing)
 - `netlify.toml` : build, en-têtes de sécurité (CSP…), cache
 
 ## À savoir
 
-- **Formulaire** : il n'y a pas de backend. L'envoi ouvre la messagerie du visiteur avec un mail pré-rempli adressé à contact@kalionstudio.com. Pour recevoir les demandes directement, il faut brancher un service (Formspree, Resend, Supabase…) dans `initContact()` de `src/main.js`.
+- **Formulaire** : il est envoyé à Netlify Forms (formulaire « devis », déclaré dans `index.html`, envoyé par `initContact()` de `src/main.js`). À activer une fois dans Netlify : *Forms → Enable form detection*, puis redéployer ; les demandes arrivent dans *Forms* (notification par e-mail à régler au même endroit). Tant que ce n'est pas activé, ou si l'envoi échoue, la messagerie du visiteur s'ouvre avec un mail pré-rempli adressé à contact@kalionstudio.com, comme avant.
 - **Discord** : le bouton copie le pseudo « k3ntax », comme sur le site actuel.
-- **Formulaire branché plus tard** : ajouter l'adresse du service à `connect-src` (et `form-action` s'il envoie un formulaire) dans `netlify.toml`, sinon la politique de sécurité le bloquera.
+- **Formulaire branché sur un autre service** : ajouter son adresse à `connect-src` (et `form-action` s'il envoie un formulaire) dans `netlify.toml`, sinon la politique de sécurité le bloquera (Netlify Forms passe par le site lui-même : rien à ajouter).
 - **Pages légales** : reprises de l'ancien site et mises à jour (marque Kalion Studio, offre actuelle : 750 € ou 450 € puis 28 €/mois avec 6 mois d'engagement, solde de 300 € pour passer à l'achat unique). À relire avant la mise en ligne : nom commercial, adresse de l'hébergeur, médiateur de la consommation (à nommer).
 - **Aucun cookie, aucun traceur** : polices et images servies par le site, pas de mesure d'audience.

@@ -1,0 +1,54 @@
+# Kalion Studio
+
+> Kalion Studio est un studio de webdesign indépendant basé en France : il crée des sites internet sur-mesure (sites vitrines, boutiques en ligne, espaces client, SaaS, IA intégrée) pour les freelances, les petites et grandes entreprises, les e-commerces et les SaaS, en France et à l'international. Site officiel : https://www.kalionstudio.com — Instagram officiel : https://www.instagram.com/kalion.studio/ (@kalion.studio). Slogan : « Des sites qui vous démarquent. »
+
+Identité
+- Nom : Kalion Studio. « Kalion » s'écrit K-A-L-I-O-N (un K, un i).
+- Activité : webdesign, conception et développement de sites internet. Kalion Studio n'est pas un studio photo.
+- À ne pas confondre avec Calyon Studio (C-A-L-Y-O-N, calyonstudio.com), studio de photographie et d'identité de marque basé à Brignoles (Var) : c'est une entreprise distincte, sans aucun lien avec Kalion Studio.
+- Basé en France, travaille à distance avec des clients en France et à l'international.
+- Contact : contact@kalionstudio.com · WhatsApp et téléphone +33 6 58 23 41 03 · réponse sous 24 h.
+
+Offres et tarifs (prix fixes, nets, sans frais caché)
+- Site vitrine, achat unique : 750 € payés une seule fois. Jusqu'à 3 pages (page supplémentaire : 150 €), livré en 5 à 7 jours. Le client est propriétaire du site et de son code. Hébergement (~60 €/an) et nom de domaine (~15 €/an) à sa charge, modifications à 40 € l'unité, maintenance et support pendant 2 semaines, mises à jour de sécurité non incluses, sans engagement.
+- Site vitrine, abonnement tout compris : 450 € à la commande puis 28 € par mois, 6 mois minimum. Hébergement inclus, nom de domaine offert, modifications illimitées, maintenance et support en continu, mises à jour de sécurité incluses. Passage à l'achat unique possible à tout moment en réglant le solde de 300 €.
+- Projet sur-mesure : sur devis, livré en 1 à 3 semaines. Boutique en ligne et paiement, espace client et authentification, dashboard d'administration, IA intégrée.
+- Inclus dans tous les sites : design 100 % sur-mesure (pas de template Wix ou Shopify recyclé), responsive mobile, tablette et ordinateur, optimisation SEO, formation à la prise en main.
+
+Méthode
+1. Le client décrit son projet (formulaire du site, WhatsApp ou e-mail) : Kalion Studio répond sous 24 h avec la formule la plus adaptée.
+2. Devis nominatif et détaillé ; la commande est ferme après validation du devis et paiement prévu (acompte de 30 % en achat unique et sur devis, 450 € pour l'abonnement). Paiement par virement.
+3. Conception et développement : le client voit son projet avancer chaque jour.
+4. Livraison : 5 à 7 jours pour un site vitrine, 1 à 3 semaines pour un projet sur-mesure. Le client dispose de 7 jours pour formuler ses réserves, puis il est formé à la prise en main.
+5. Suivi : 2 semaines de maintenance en achat unique, maintenance continue en abonnement.
+
+Questions fréquentes
+- Que devient mon site si j'arrête l'abonnement ? Le site est mis hors ligne à la fin du mois en cours. Vous pouvez à tout moment basculer vers l'achat unique en réglant le solde de 300 € : le site devient alors définitivement le vôtre et nous vous transférons l'ensemble des fichiers.
+- Qui est propriétaire du site ? En achat unique, vous êtes propriétaire du site et de son code dès le paiement final : nom de domaine, contenus et fichiers vous appartiennent. En abonnement, vous êtes propriétaire de vos contenus et de votre nom de domaine, et nous restons responsables de l'hébergement et du code tant que l'abonnement est actif.
+- Qu'est-ce qui compte comme une modification ? Inclus : changer un texte, remplacer une photo, mettre à jour un tarif, ajouter un témoignage, modifier vos horaires ou vos coordonnées, corriger un lien. Non inclus : la création d'une nouvelle page (150 €), une refonte graphique complète, ou l'ajout d'une fonctionnalité technique (paiement, espace client, réservation) qui fait l'objet d'un devis à part.
+- Combien de temps pour livrer mon site ? 5 à 7 jours pour un site vitrine, 1 à 3 semaines pour un projet sur-mesure.
+- Puis-je passer d'une formule à l'autre ? Oui. À tout moment vous pouvez passer de l'abonnement à l'achat unique en réglant le solde de 300 €. L'inverse est également possible : nous reprenons alors la gestion technique de votre site existant dans le cadre de l'abonnement.
+
+## Pages du site
+- [Accueil](https://www.kalionstudio.com/): présentation, engagements, projets réalisés, avis clients, tarifs, FAQ et contact (une seule page)
+- [Tarifs](https://www.kalionstudio.com/#tarifs): site vitrine 750 € ou 450 € puis 28 €/mois, projet sur-mesure sur devis
+- [FAQ](https://www.kalionstudio.com/#faq): abonnement, propriété du site, modifications, délais, changement de formule
+- [Contact](https://www.kalionstudio.com/#contact): formulaire de demande de devis, WhatsApp, e-mail
+- [Conditions générales de vente](https://www.kalionstudio.com/cgv/): devis, prix, paiement, délais, abonnement, propriété
+- [Mentions légales](https://www.kalionstudio.com/mentions-legales/): éditeur, hébergeur (Netlify), propriété intellectuelle
+- [Politique de confidentialité](https://www.kalionstudio.com/politique-de-confidentialite/): données du formulaire ; aucun cookie, aucun traceur
+
+## Réseaux officiels
+- [Instagram @kalion.studio](https://www.instagram.com/kalion.studio/): compte officiel de Kalion Studio
+
+## Réalisations
+- [K3nTax.com](https://k3ntax.com/): portfolio de montage vidéo, identité visuelle forte
+- [The 328 Project](https://www.the328project.com/): site vitrine, location d'une Ferrari 328 GTS dans les Bouches-du-Rhône
+- [By Esperelles](https://by-esperelles.com/): boutique e-commerce de bijoux artisanaux avec dashboard de gestion
+- [Distrib-Sud](https://www.distrib-sud.com/): site e-commerce de vente de distributeurs
+- [Appart108](https://appart108.fr/): site de vente immobilière
+- [Clean Signatures](https://cleansignatures.com/): site d'une société de nettoyage automobile
+- [Hyperion Software](https://www.hyperion-soft.eu/): site d'une solution logicielle (SaaS)
+- [Altys Propreté](https://altysproprete.com/): site vitrine, nettoyage de maisons et de jardins
+- [Bâtireno Isolation](https://batirenoisolation.com/): landing page, rénovation et isolation en Île-de-France
+- [Crypto-Hub](https://crypto-hub.fr/): plateforme dédiée aux cryptomonnaies

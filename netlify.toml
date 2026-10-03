@@ -18,13 +18,21 @@
   status = 301
   force = true
 
+# (the production branch's own address too)
+[[redirects]]
+  from = "https://main--kalionstudio.netlify.app/*"
+  to = "https://www.kalionstudio.com/:splat"
+  status = 301
+  force = true
+
 # ------------------------------------------------------------------
 # Security headers, on every page
 # ------------------------------------------------------------------
 # Content-Security-Policy: everything comes from the site itself (fonts, images, scripts);
 # 'unsafe-inline' for styles only (the preloader's critical styles are inline in the page).
-# When the contact form is connected to a service (Formspree, Resend, Netlify Forms…),
-# add its address to connect-src (and form-action if it posts a form).
+# The contact form posts to the site itself (Netlify Forms, see main.js): 'self' covers it.
+# If it is ever connected to another service (Formspree, Resend…), add its address to
+# connect-src (and form-action if it posts a form).
 [[headers]]
   for = "/*"
   [headers.values]
@@ -65,5 +73,18 @@
   for = "/site.webmanifest"
   [headers.values]
     Content-Type = "application/manifest+json; charset=utf-8"
+
+# robots.txt and llms.txt: plain text in UTF-8 (accents); llms.txt stays out of search results
+# (it is read by AI assistants; the page itself is what search engines should show)
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    X-Robots-Tag = "noindex"
 
 # (the pages themselves are always revalidated: Netlify's default)
