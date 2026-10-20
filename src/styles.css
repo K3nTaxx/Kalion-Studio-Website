@@ -388,7 +388,7 @@ html.cursor-liquid .cursor:not(.is-hover):not(.is-label)::before { transform: sc
 .nav.is-hidden > * { transform: translateY(-130%); opacity: 0; filter: blur(10px); }
 /* (the quote button — and on a phone the menu's — stay, once the page is open: a request is
    always one tap away. The opening keeps the bar's own entrance: Lenis is stopped until then.) */
-html:not(.lenis-stopped) .nav.is-hidden > .nav__right { transform: none; opacity: 1; filter: none; pointer-events: auto; }
+html.lenis:not(.lenis-stopped) .nav.is-hidden > .nav__right { transform: none; opacity: 1; filter: none; pointer-events: auto; }
 /* Logo: the "Kalion" wordmark, or only the K symbol while the big liquid
    "Kalion Studio" is on screen (hero, footer) — never the name twice. */
 .nav__logo {
@@ -1820,7 +1820,8 @@ html.no-webgl .footer__fallback {
   .dot::after,
   .send__wave { animation: none; }
   .send__fill,
-  .toast { transition: none; }
+  .toast,
+  .toast.is-show { transition: none; }
 }
 
 /* ---------------- very wide screens ----------------

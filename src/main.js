@@ -1015,7 +1015,7 @@ function initHero() {
       },
     },
   });
-  tl.to('.hero__bottom', { y: -60, opacity: 0, ease: 'power2.in', duration: 0.14 }, 0).to({}, { duration: 0.86 });
+  tl.to('.hero__bottom', { y: -60, autoAlpha: 0, ease: 'power2.in', duration: 0.14 }, 0).to({}, { duration: 0.86 });
   syncGL();
   // keyboard (see initKeyboard): the offer's links and buttons are only there at the very top
   focusSpot(controlsOf($('.hero__bottom')), () => 0, () => scrollPos < 4);

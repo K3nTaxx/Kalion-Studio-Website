@@ -190,7 +190,14 @@ html.is-mobile .grain { inset: 0; animation: none; opacity: 0.45; }
     text-align: center;
   }
   .hero__offer { max-width: none; justify-items: center; gap: 9px; }
-  .hero__line { font-size: min(7.4vw, 4.2vh); line-height: 1.08; }
+  .hero__line { font-size: min(7.4vw, 4.2svh); line-height: 1.08; }
+  /* (short visible heights — browser bars, in-app browsers: the offer stays clear of the liquid word) */
+  @media (max-height: 680px) {
+    .hero__bottom { gap: 14px; }
+    .hero__offer { gap: 6px; }
+    .hero__proof { display: none; }
+    .hero__line { font-size: min(6.6vw, 3.8svh); }
+  }
   .hero__price { font-size: 10.5px; line-height: 1.9; }
   .hero__proof { font-size: 10px; }
   .hero__ctas { gap: 8px; max-width: 100%; }
