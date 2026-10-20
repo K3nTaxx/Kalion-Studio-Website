@@ -15,7 +15,7 @@ const PAGES = [
   { path: '/', priority: '1.0', lastmod: '2026-10-20' },
   { path: '/mentions-legales/', priority: '0.3', lastmod: '2026-10-02' },
   { path: '/politique-de-confidentialite/', priority: '0.3', lastmod: '2026-10-20' },
-  { path: '/cgv/', priority: '0.4', lastmod: '2026-10-02' },
+  { path: '/cgv/', priority: '0.4', lastmod: '2026-10-20' },
 ];
 
 function site() {
