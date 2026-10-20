@@ -726,8 +726,7 @@ async function initGL() {
     if (devQ && devQ.get('wordw')) font = { ...font, width: +devQ.get('wordw') };
     await document.fonts.load(`${font.weight} 120px "${font.family}"`);
     gl = new LiquidScene(canvas, font, { mobile: MOBILE, dpr: glDpr(1.5, 1.5) });
-    // (on a phone the word sits a little higher: the offer and its buttons are under it)
-    if (MOBILE) Object.assign(gl.layout, { hero: 0.1, footer: -0.25, footerScale: 0.94 });
+    if (MOBILE) Object.assign(gl.layout, { hero: 0.03, footer: -0.25, footerScale: 0.94 });
     if (devQ && devQ.get('wordy')) gl.layout.hero = +devQ.get('wordy');
     if (import.meta.env.DEV) window.__gl = gl; // dev only: the visuals place its droplets
     // (other words in the same glass, the i's dot in ember: for the social visuals)
@@ -909,7 +908,6 @@ function playIntro(speed = 1) {
     .fromTo('.hero__bottom .btn', { clipPath: 'inset(0% 100% 0% 0% round 100px)' }, { clipPath: 'inset(0% 0% 0% 0% round 100px)', duration: 1.1, ease: 'expo.inOut', clearProps: 'clipPath' }, UI + 0.25)
     .from('.hero__bottom .btn__label', { yPercent: 120, duration: 1, ease: 'expo.out', clearProps: 'transform' }, UI + 0.55)
     .from('.hero__bottom .btn__icon', { scale: 0, rotate: -120, duration: 1, ease: 'back.out(1.8)', clearProps: 'transform' }, UI + 0.65)
-    .from('.hero__offer > *', { y: 24, opacity: 0, duration: 1, stagger: 0.08, ease: 'expo.out', clearProps: 'transform,opacity' }, UI + 0.2)
     .from('.indicator', { opacity: 0, duration: 1.2, ease: 'power2.out', clearProps: 'opacity' }, UI + 0.4)
     .add(() => {
       lenis.start();
@@ -1017,8 +1015,8 @@ function initHero() {
   });
   tl.to('.hero__bottom', { y: -60, autoAlpha: 0, ease: 'power2.in', duration: 0.14 }, 0).to({}, { duration: 0.86 });
   syncGL();
-  // keyboard (see initKeyboard): the offer's links and buttons are only there at the very top
-  focusSpot(controlsOf($('.hero__bottom')), () => 0, () => scrollPos < 4);
+  // keyboard (see initKeyboard): the button is only there at the very top
+  focusSpot($$('.hero__bottom .btn'), () => 0, () => scrollPos < 4);
 }
 
 /* ------------------------------------------------------------------
@@ -2477,57 +2475,22 @@ function preselect(group, value) {
 }
 
 /* ------------------------------------------------------------------
-   Message match — the hero says what the clicked ad said. Read from the
-   address only (Google Ads: utm_term={keyword}; an ad's final URL may also
-   carry ?offre=abonnement|refonte|ecommerce or ?metier=plombier): no cookie,
-   nothing kept. Only the fixed texts below are ever written, never the
-   address's own words; without them the page says its usual offer.
+   Message match — the letter's chips follow the clicked ad. Read from the
+   address only (Google Ads: utm_term={keyword}; or ?offre=abonnement|
+   refonte|ecommerce): no cookie, nothing kept. The page's texts don't change.
 ------------------------------------------------------------------ */
-const plain = (v) => String(v || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const MM_TRADES = [
-  [/artisan/, 'votre activité d’artisan'],
-  [/restaurant|restauration|pizzeria/, 'votre restaurant'],
-  [/boulang|patiss/, 'votre boulangerie'],
-  [/traiteur/, 'votre activité de traiteur'],
-  [/coach/, 'votre activité de coach'],
-  [/photograph/, 'votre activité de photographe'],
-  [/architect/, 'votre cabinet d’architecte'],
-  [/therapeut|psycholog|sophrolog|naturopath|osteopath/, 'votre cabinet'],
-  [/coiff/, 'votre salon de coiffure'],
-  [/barbier/, 'votre barbier'],
-  [/plomb/, 'votre entreprise de plomberie'],
-  [/electric/, 'votre entreprise d’électricité'],
-  [/nettoyage|menage|proprete/, 'votre entreprise de nettoyage'],
-  [/immobili/, 'votre agence immobilière'],
-];
+const plain = (v) => String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function initMessageMatch() {
   const q = new URLSearchParams(location.search);
-  const term = plain([q.get('utm_term'), q.get('offre'), q.get('metier')].filter(Boolean).join(' '));
-  const line = $('[data-mm="line"]');
-  const price = $('[data-mm="price"]');
-  if (!term || !line || !price) return;
+  const term = plain([q.get('utm_term'), q.get('offre')].filter(Boolean).join(' '));
+  if (!term) return;
   if (/e-?commerce|boutique en ligne|vente en ligne/.test(term)) {
-    line.textContent = 'Votre boutique en ligne sur-mesure, livrée en 1 à 3 semaines.';
-    price.textContent = 'Projet sur-mesure, sur devis : paiement, espace client, dashboard';
     preselect('type', 'E-commerce');
     preselect('budget', 'Sur devis');
     return;
   }
-  const trade = MM_TRADES.find(([re]) => re.test(term));
-  const redo = /refonte|refaire|moderniser|nouveau site/.test(term);
-  if (redo) {
-    line.textContent = 'Refonte de site : un nouveau site vitrine 100 % sur-mesure, livré en 5 à 7 jours.';
-    preselect('type', 'Refonte de site');
-  } else if (trade) {
-    line.textContent = `Le site vitrine sur-mesure de ${trade[1]}, livré en 5 à 7 jours.`;
-  }
-  if (/abonnement|mensuel|par mois|au mois|location|louer|cle en main|tout compris/.test(term)) {
-    if (!trade && !redo) line.textContent = 'Votre site vitrine clé en main, tout compris, livré en 5 à 7 jours.';
-    price.textContent = '450 € puis 28 €/mois : hébergement, domaine et modifications illimitées inclus';
-    preselect('budget', 'Abonnement · 450 € puis 28 €/mois');
-  } else if (/prix|tarif|cout|combien|pas cher/.test(term)) {
-    price.textContent = 'Prix fixe : 750 € une seule fois, ou 450 € puis 28 €/mois tout compris';
-  }
+  if (/refonte|refaire|moderniser|nouveau site/.test(term)) preselect('type', 'Refonte de site');
+  if (/abonnement|mensuel|par mois|au mois|location|louer|cle en main|tout compris/.test(term)) preselect('budget', 'Abonnement · 450 € puis 28 €/mois');
 }
 
 function initContact() {

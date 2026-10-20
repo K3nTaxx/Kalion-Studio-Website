@@ -580,24 +580,7 @@ html.boot-fallback .hero__fallback {
   line-height: 1;
   letter-spacing: -0.03em;
 }
-.hero__bottom {
-  position: absolute;
-  left: var(--pad);
-  right: var(--pad);
-  bottom: 3vw;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 4vw;
-}
-/* the offer, as the ads say it: one line in the serif, the price, the reviews */
-.hero__offer { display: grid; justify-items: start; gap: 0.9em; max-width: min(36vw, 620px); }
-.hero__line { margin: 0; font-family: var(--serif); font-size: clamp(26px, 2.15vw, 44px); line-height: 1.05; letter-spacing: -0.015em; color: var(--fg); }
-.hero__price { margin: 0; color: var(--fg); text-decoration: underline; text-decoration-color: rgba(255, 91, 36, 0.6); text-underline-offset: 6px; text-wrap: balance; }
-.hero__proof { color: var(--fg-2); text-wrap: balance; transition: color 0.4s; }
-.hero__proof:hover { color: var(--fg); }
-.hero__proof b { font-weight: 400; letter-spacing: 0.12em; color: var(--ember); }
-.hero__ctas { display: flex; flex: none; gap: 0.8vw; }
+.hero__bottom { position: absolute; right: var(--pad); bottom: 3vw; }
 
 /* =========================================================
    ABOUT / MANIFESTO
