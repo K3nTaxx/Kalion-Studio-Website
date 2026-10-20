@@ -74,7 +74,7 @@ Les fichiers de la marque (logos, symbole K, planche d'identité) sont rangés h
 ## À savoir
 
 - **Formulaire** : il est envoyé à Netlify Forms (formulaire « devis », déclaré dans `index.html`, envoyé par `initContact()` de `src/main.js`). À activer une fois dans Netlify : *Forms → Enable form detection*, puis redéployer ; les demandes arrivent dans *Forms* (notification par e-mail à régler au même endroit). Tant que ce n'est pas activé, ou si l'envoi échoue, la messagerie du visiteur s'ouvre avec un mail pré-rempli adressé à contact@kalionstudio.com, comme avant.
-- **Discord** : le bouton copie le pseudo « k3ntax », comme sur le site actuel.
+- **Contact** : WhatsApp et mail uniquement (Discord et Telegram retirés le 20 octobre 2026).
 - **Formulaire branché sur un autre service** : ajouter son adresse à `connect-src` (et `form-action` s'il envoie un formulaire) dans `netlify.toml`, sinon la politique de sécurité le bloquera (Netlify Forms passe par le site lui-même : rien à ajouter).
 - **Pages légales** : reprises de l'ancien site et mises à jour (marque Kalion Studio, offre actuelle : 750 € ou 450 € puis 28 €/mois avec 6 mois d'engagement, solde de 300 € pour passer à l'achat unique). À relire avant la mise en ligne : nom commercial, adresse de l'hébergeur, médiateur de la consommation (à nommer).
 - **Aucun cookie, aucun traceur** : polices et images servies par le site, pas de mesure d'audience.

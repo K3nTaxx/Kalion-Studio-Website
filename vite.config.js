@@ -12,9 +12,9 @@ const SITE_URL = (process.env.SITE_URL || 'https://www.kalionstudio.com').replac
 // the pages listed in the sitemap, with the day each one last really changed (update it when
 // a page's content changes: a date that moves at every build tells search engines nothing)
 const PAGES = [
-  { path: '/', priority: '1.0', lastmod: '2026-10-03' },
+  { path: '/', priority: '1.0', lastmod: '2026-10-20' },
   { path: '/mentions-legales/', priority: '0.3', lastmod: '2026-10-02' },
-  { path: '/politique-de-confidentialite/', priority: '0.3', lastmod: '2026-10-03' },
+  { path: '/politique-de-confidentialite/', priority: '0.3', lastmod: '2026-10-20' },
   { path: '/cgv/', priority: '0.4', lastmod: '2026-10-02' },
 ];
 

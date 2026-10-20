@@ -2461,18 +2461,6 @@ function preselect(group, value) {
 }
 
 function initContact() {
-  $$('[data-copy]').forEach((btn) =>
-    btn.addEventListener('click', async () => {
-      const value = btn.dataset.copy;
-      try {
-        await navigator.clipboard.writeText(value);
-        toast(`Pseudo Discord « ${value} » copié`);
-      } catch {
-        toast(`Discord : ${value}`);
-      }
-    })
-  );
-
   // chips: an ember drop slides to the chosen option, stretching on the way like a liquid
   $$('.chips').forEach((group) => {
     const blob = $('.chips__blob', group);
