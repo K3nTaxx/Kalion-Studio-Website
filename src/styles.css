@@ -386,6 +386,9 @@ html.cursor-liquid .cursor:not(.is-hover):not(.is-label)::before { transform: sc
 .nav.is-hidden { pointer-events: none; }
 .nav.is-hidden::before { opacity: 0; }
 .nav.is-hidden > * { transform: translateY(-130%); opacity: 0; filter: blur(10px); }
+/* (the quote button — and on a phone the menu's — stay, once the page is open: a request is
+   always one tap away. The opening keeps the bar's own entrance: Lenis is stopped until then.) */
+html:not(.lenis-stopped) .nav.is-hidden > .nav__right { transform: none; opacity: 1; filter: none; pointer-events: auto; }
 /* Logo: the "Kalion" wordmark, or only the K symbol while the big liquid
    "Kalion Studio" is on screen (hero, footer) — never the name twice. */
 .nav__logo {
@@ -577,7 +580,24 @@ html.boot-fallback .hero__fallback {
   line-height: 1;
   letter-spacing: -0.03em;
 }
-.hero__bottom { position: absolute; right: var(--pad); bottom: 3vw; }
+.hero__bottom {
+  position: absolute;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: 3vw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4vw;
+}
+/* the offer, as the ads say it: one line in the serif, the price, the reviews */
+.hero__offer { display: grid; justify-items: start; gap: 0.9em; max-width: min(36vw, 620px); }
+.hero__line { margin: 0; font-family: var(--serif); font-size: clamp(26px, 2.15vw, 44px); line-height: 1.05; letter-spacing: -0.015em; color: var(--fg); }
+.hero__price { margin: 0; color: var(--fg); text-decoration: underline; text-decoration-color: rgba(255, 91, 36, 0.6); text-underline-offset: 6px; text-wrap: balance; }
+.hero__proof { color: var(--fg-2); text-wrap: balance; transition: color 0.4s; }
+.hero__proof:hover { color: var(--fg); }
+.hero__proof b { font-weight: 400; letter-spacing: 0.12em; color: var(--ember); }
+.hero__ctas { display: flex; flex: none; gap: 0.8vw; }
 
 /* =========================================================
    ABOUT / MANIFESTO
@@ -1515,6 +1535,10 @@ html.cursor-drop .cursor:not(.is-hover):not(.is-label)::before { transform: scal
 .contact__side { align-self: center; }
 .contact__lead { max-width: 30vw; font-size: clamp(14px, 1vw, 19px); line-height: 1.55; color: var(--fg-2); }
 .contact__lead strong { font-weight: 500; color: var(--fg); }
+.contact__proof { display: flex; flex-wrap: wrap; gap: 0.6em 1.4em; margin-top: 1.2vw; color: var(--fg-2); }
+.contact__proof a { color: var(--fg); transition: color 0.4s; }
+.contact__proof a:hover { color: var(--ember); }
+.contact__proof a span { color: var(--ember); letter-spacing: 0.1em; }
 .contact__channels { margin-top: 2vw; }
 .channel {
   position: relative;
@@ -1695,6 +1719,7 @@ html.cursor-drop .cursor:not(.is-hover):not(.is-label)::before { transform: scal
 .chips input:focus-visible + span { outline: 2px solid var(--ember); outline-offset: 2px; }
 .form__foot { display: flex; justify-content: space-between; align-items: center; gap: 1.6vw; margin-top: 0.3vw; }
 .form__status { display: inline-flex; align-items: center; color: var(--fg-2); }
+.form__status a { color: var(--fg); border-bottom: 1px solid var(--ember); }
 /* the send button fills with liquid as the form gets completed */
 .send {
   position: relative;
@@ -1792,7 +1817,10 @@ html.no-webgl .footer__fallback {
 /* ---------------- reduced motion ---------------- */
 @media (prefers-reduced-motion: reduce) {
   .grain,
-  .dot::after { animation: none; }
+  .dot::after,
+  .send__wave { animation: none; }
+  .send__fill,
+  .toast { transition: none; }
 }
 
 /* ---------------- very wide screens ----------------

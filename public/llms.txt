@@ -23,7 +23,10 @@ Méthode
 5. Suivi : 2 semaines de maintenance en achat unique, maintenance continue en abonnement.
 
 Questions fréquentes
-- Que devient mon site si j'arrête l'abonnement ? Le site est mis hors ligne à la fin du mois en cours. Vous pouvez à tout moment basculer vers l'achat unique en réglant le solde de 300 € : le site devient alors définitivement le vôtre et nous vous transférons l'ensemble des fichiers.
+- Combien coûte un site vitrine ? Un site vitrine 100 % sur-mesure, jusqu'à 3 pages et livré en 5 à 7 jours, coûte 750 € en achat unique : il vous appartient, l'hébergement (~60 €/an) et le nom de domaine (~15 €/an) restent à votre charge. Ou bien 450 € à la commande puis 28 € par mois (6 mois minimum) en abonnement tout compris. Page supplémentaire : 150 €. Le prix annoncé au devis est le prix final, sans frais caché.
+- Peut-on payer son site internet au mois ? Oui : c'est l'abonnement tout compris, un site internet clé en main que vous payez au mois, comme une location. 450 € à la commande puis 28 € par mois, 6 mois minimum. Hébergement, nom de domaine, modifications illimitées, maintenance, support et mises à jour de sécurité sont inclus. À tout moment, vous pouvez devenir propriétaire du site en réglant le solde de 300 €.
+- Créez-vous des sites internet pour mon métier ? Oui. Chaque site est conçu sur-mesure pour votre activité : artisans (plombier, électricien…), restaurants, salons de coiffure, coachs, thérapeutes, photographes, architectes, entreprises de nettoyage, agences immobilières, commerces et indépendants. Nous avons par exemple réalisé les sites d'Altys Propreté (nettoyage), d'Appart108 (immobilier) et de Bâtireno Isolation (rénovation).
+- Que devient mon site si j'arrête l'abonnement ? L'abonnement est souscrit pour 6 mois minimum ; ensuite, il se résilie à tout moment et le site est mis hors ligne à la fin du mois en cours. Vous pouvez aussi, à tout moment, basculer vers l'achat unique en réglant le solde de 300 € : le site devient alors définitivement le vôtre et nous vous transférons l'ensemble des fichiers.
 - Qui est propriétaire du site ? En achat unique, vous êtes propriétaire du site et de son code dès le paiement final : nom de domaine, contenus et fichiers vous appartiennent. En abonnement, vous êtes propriétaire de vos contenus et de votre nom de domaine, et nous restons responsables de l'hébergement et du code tant que l'abonnement est actif.
 - Qu'est-ce qui compte comme une modification ? Inclus : changer un texte, remplacer une photo, mettre à jour un tarif, ajouter un témoignage, modifier vos horaires ou vos coordonnées, corriger un lien. Non inclus : la création d'une nouvelle page (150 €), une refonte graphique complète, ou l'ajout d'une fonctionnalité technique (paiement, espace client, réservation) qui fait l'objet d'un devis à part.
 - Combien de temps pour livrer mon site ? 5 à 7 jours pour un site vitrine, 1 à 3 semaines pour un projet sur-mesure.
@@ -32,7 +35,7 @@ Questions fréquentes
 ## Pages du site
 - [Accueil](https://www.kalionstudio.com/): présentation, engagements, projets réalisés, avis clients, tarifs, FAQ et contact (une seule page)
 - [Tarifs](https://www.kalionstudio.com/#tarifs): site vitrine 750 € ou 450 € puis 28 €/mois, projet sur-mesure sur devis
-- [FAQ](https://www.kalionstudio.com/#faq): abonnement, propriété du site, modifications, délais, changement de formule
+- [FAQ](https://www.kalionstudio.com/#faq): prix d'un site vitrine, paiement au mois, sites par métier, abonnement, propriété du site, modifications, délais, changement de formule
 - [Contact](https://www.kalionstudio.com/#contact): formulaire de demande de devis, WhatsApp, e-mail
 - [Conditions générales de vente](https://www.kalionstudio.com/cgv/): devis, prix, paiement, délais, abonnement, propriété
 - [Mentions légales](https://www.kalionstudio.com/mentions-legales/): éditeur, hébergeur (Netlify), propriété intellectuelle

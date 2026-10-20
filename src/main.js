@@ -80,6 +80,13 @@ window.__kalionStarted = true; // (public/boot-guard.js: the script runs)
 // dev only: http://localhost:5188/?fast skips the preloader choreography
 const FAST = import.meta.env.DEV && new URLSearchParams(location.search).has('fast');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// a visitor from an ad (Google Ads adds gclid / gbraid / wbraid, the campaign its utm_*): the
+// same opening, quicker (read from the address only, nothing kept)
+const AD = /[?&](gclid|gbraid|wbraid|utm_source)=/.test(location.search);
+// a reload, or a return from another page of the site (back / forward): the opening was already
+// seen (the browser's own navigation type, nothing stored)
+const NAV_TYPE = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type;
+const RETURNING = NAV_TYPE === 'reload' || NAV_TYPE === 'back_forward';
 const finePointer = matchMedia('(pointer: fine)').matches;
 
 // Two layouts: the computer one (landscape) and the phone one (portrait screens, small
@@ -90,12 +97,21 @@ const MOBILE = matchMedia(MQ_MOBILE).matches;
 const TOUCH = !finePointer;
 root.classList.toggle('is-mobile', MOBILE);
 root.classList.toggle('is-touch', TOUCH);
-matchMedia(MQ_MOBILE).addEventListener('change', () => {
-  // (never while someone is typing in the form: a keyboard can change the screen's shape)
+// (never while someone is typing in the form, nor once they have written something in it: a
+// keyboard can change the screen's shape, and a reload would lose their request — it then
+// waits until the form is left empty)
+const formHolds = () => {
   const f = document.activeElement;
-  if (f && /^(INPUT|TEXTAREA)$/.test(f.tagName)) return;
-  location.reload();
+  if (f && /^(INPUT|TEXTAREA)$/.test(f.tagName)) return true;
+  const form = document.querySelector('.form');
+  return !!form && ['name', 'email', 'message'].some((k) => form.elements[k] && form.elements[k].value.trim());
+};
+let reloadPending = false;
+matchMedia(MQ_MOBILE).addEventListener('change', (e) => {
+  reloadPending = e.matches !== MOBILE; // (back to the layout it was opened in: nothing to do)
+  if (reloadPending && !formHolds()) location.reload();
 });
+document.addEventListener('focusout', () => setTimeout(() => reloadPending && !formHolds() && location.reload(), 300));
 
 // The viewport the choreographies are laid out on. On phones the browser bars come and go
 // while scrolling (the visible height changes all the time): the scenes keep the full
@@ -247,10 +263,10 @@ function initQuality() {
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
-// A link straight to a section (kalionstudio.com/#tarifs): the opening plays at the top as
-// always, then the page travels there as the menu's links do (goToDeepLink). Until then the
-// browser must not jump to it by itself — it does while the page loads, and the opening would
-// play in the middle of the page. (Never once public/boot-guard.js has opened the page itself.)
+// A link straight to a section (kalionstudio.com/#tarifs, the ads' sitelinks): no opening, the
+// page lands on the section at once (see boot). Until then the browser must not jump to it by
+// itself — it does while the page loads, before the scenes are laid out. (Never once
+// public/boot-guard.js has opened the page itself.)
 const deepLink =
   location.hash.length > 1 && location.hash !== '#top' && $$('[data-scroll]').some((a) => a.getAttribute('href') === location.hash) ? location.hash : null;
 const holdTop = () => {
@@ -258,10 +274,13 @@ const holdTop = () => {
   else if (window.scrollY) window.scrollTo(0, 0);
 };
 if (deepLink) window.addEventListener('scroll', holdTop, { passive: true });
-function goToDeepLink() {
+function goToDeepLink(jump = false) {
   if (!deepLink) return;
   window.removeEventListener('scroll', holdTop);
-  scrollToTarget(deepLink);
+  // (a jump right after the scenes are laid out: Lenis must first read the page's full height —
+  // its own measure is debounced — or it would stop short of the section)
+  if (jump) lenis.resize();
+  scrollToTarget(deepLink, jump);
 }
 
 /* ------------------------------------------------------------------
@@ -322,32 +341,22 @@ gsap.ticker.lagSmoothing(0);
 lenis.stop();
 if (import.meta.env.DEV) window.__lenis = lenis; // dev only: lets the preview tests drive the scroll
 
-function scrollToTarget(href) {
+function scrollToTarget(href, jump = false) {
+  // jump: straight there, without the travel (a link from outside, e.g. an ad's sitelink)
+  const how = jump ? { immediate: true, force: true } : { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) };
   // the manifesto: land once all of it is lit (the lens has opened, every word read)
-  if (href === '#apropos' && aboutY) {
-    lenis.scrollTo(aboutY(), { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-    return;
-  }
+  if (href === '#apropos' && aboutY) return void lenis.scrollTo(aboutY(), how);
   // the reviews: land once they have spread out of the sphere
-  if (href === '#avis' && reviewsY) {
-    lenis.scrollTo(reviewsY(), { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-    return;
-  }
+  if (href === '#avis' && reviewsY) return void lenis.scrollTo(reviewsY(), how);
   if (href === '#contact' && contactY) {
-    lenis.scrollTo(contactY(), { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-    return;
+    letterHeld = true;
+    return void lenis.scrollTo(contactY(), how);
   }
-  if (href === '#tarifs' && pricingY) {
-    lenis.scrollTo(pricingY(), { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-    return;
-  }
-  if (href === '#projets' && projectsGalleryY) {
-    lenis.scrollTo(projectsGalleryY(), { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-    return;
-  }
+  if (href === '#tarifs' && pricingY) return void lenis.scrollTo(pricingY(), how);
+  if (href === '#projets' && projectsGalleryY) return void lenis.scrollTo(projectsGalleryY(), how);
   const target = href === '#top' ? 0 : $(href);
   if (target === null) return;
-  lenis.scrollTo(target, { duration: 2.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
+  lenis.scrollTo(target, how);
 }
 
 $$('[data-scroll]').forEach((a) => {
@@ -356,6 +365,8 @@ $$('[data-scroll]').forEach((a) => {
     if (!href || !href.startsWith('#')) return;
     e.preventDefault();
     if (a.dataset.project) preselect('type', a.dataset.project);
+    // (the pricing's buttons: the formula just chosen is ticked in the letter)
+    if (a.dataset.formula) preselect('budget', a.dataset.formula);
     // (from the bar while the phone menu is open: the menu closes first)
     if (menu.open) menu.hide(() => scrollToTarget(href));
     else scrollToTarget(href);
@@ -384,12 +395,12 @@ function makeGrain() {
 }
 
 let toastTimer;
-function toast(msg) {
+function toast(msg, ms = 2600) {
   const t = $('.toast');
   t.textContent = msg;
   t.classList.add('is-show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('is-show'), 2600);
+  toastTimer = setTimeout(() => t.classList.remove('is-show'), ms);
 }
 
 function initCursor() {
@@ -715,7 +726,8 @@ async function initGL() {
     if (devQ && devQ.get('wordw')) font = { ...font, width: +devQ.get('wordw') };
     await document.fonts.load(`${font.weight} 120px "${font.family}"`);
     gl = new LiquidScene(canvas, font, { mobile: MOBILE, dpr: glDpr(1.5, 1.5) });
-    if (MOBILE) Object.assign(gl.layout, { hero: 0.03, footer: -0.25, footerScale: 0.94 });
+    // (on a phone the word sits a little higher: the offer and its buttons are under it)
+    if (MOBILE) Object.assign(gl.layout, { hero: 0.1, footer: -0.25, footerScale: 0.94 });
     if (devQ && devQ.get('wordy')) gl.layout.hero = +devQ.get('wordy');
     if (import.meta.env.DEV) window.__gl = gl; // dev only: the visuals place its droplets
     // (other words in the same glass, the i's dot in ember: for the social visuals)
@@ -781,7 +793,7 @@ function finishCounter(within = 0.4) {
   return Promise.all(anims.map((a) => a.finished.catch(() => {}))).then(done);
 }
 
-function playIntro() {
+function playIntro(speed = 1) {
   window.__kalionOpened = true; // (public/boot-guard.js: nothing to do)
   const W = window.innerWidth;
   const H = window.innerHeight;
@@ -897,6 +909,7 @@ function playIntro() {
     .fromTo('.hero__bottom .btn', { clipPath: 'inset(0% 100% 0% 0% round 100px)' }, { clipPath: 'inset(0% 0% 0% 0% round 100px)', duration: 1.1, ease: 'expo.inOut', clearProps: 'clipPath' }, UI + 0.25)
     .from('.hero__bottom .btn__label', { yPercent: 120, duration: 1, ease: 'expo.out', clearProps: 'transform' }, UI + 0.55)
     .from('.hero__bottom .btn__icon', { scale: 0, rotate: -120, duration: 1, ease: 'back.out(1.8)', clearProps: 'transform' }, UI + 0.65)
+    .from('.hero__offer > *', { y: 24, opacity: 0, duration: 1, stagger: 0.08, ease: 'expo.out', clearProps: 'transform,opacity' }, UI + 0.2)
     .from('.indicator', { opacity: 0, duration: 1.2, ease: 'power2.out', clearProps: 'opacity' }, UI + 0.4)
     .add(() => {
       lenis.start();
@@ -904,6 +917,7 @@ function playIntro() {
       if (quality.arm) quality.arm();
       goToDeepLink(); // (a link to a section: on to it, now that the page is open)
     }, UI + 0.3);
+  if (speed !== 1) tl.timeScale(speed); // (a visitor from an ad: the same choreography, quicker)
   if (FAST) tl.progress(1);
 }
 
@@ -1003,8 +1017,8 @@ function initHero() {
   });
   tl.to('.hero__bottom', { y: -60, opacity: 0, ease: 'power2.in', duration: 0.14 }, 0).to({}, { duration: 0.86 });
   syncGL();
-  // keyboard (see initKeyboard): the button is only there at the very top
-  focusSpot($$('.hero__bottom .btn'), () => 0, () => scrollPos < 4);
+  // keyboard (see initKeyboard): the offer's links and buttons are only there at the very top
+  focusSpot(controlsOf($('.hero__bottom')), () => 0, () => scrollPos < 4);
 }
 
 /* ------------------------------------------------------------------
@@ -2022,7 +2036,9 @@ function initPricing() {
     pin: '.pricing__pin',
     invalidateOnRefresh: true,
   });
-  pricingY = () => pin.start + vp.h * (LAND + 0.2);
+  // (nav links and the ads' « Tarifs » sitelink: land on the two formulas and their prices —
+  // 750 € and 450 € then 28 €/mois — their buttons at hand, see the focusSpot below)
+  pricingY = () => pin.start + vp.h * (Q2 + 0.75);
   // keyboard (see initKeyboard): the formulas' buttons, while their question is asked
   const uNow = () => (scrollPos - pin.start) / vp.h;
   focusSpot(
@@ -2460,6 +2476,60 @@ function preselect(group, value) {
   input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+/* ------------------------------------------------------------------
+   Message match — the hero says what the clicked ad said. Read from the
+   address only (Google Ads: utm_term={keyword}; an ad's final URL may also
+   carry ?offre=abonnement|refonte|ecommerce or ?metier=plombier): no cookie,
+   nothing kept. Only the fixed texts below are ever written, never the
+   address's own words; without them the page says its usual offer.
+------------------------------------------------------------------ */
+const plain = (v) => String(v || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const MM_TRADES = [
+  [/artisan/, 'votre activité d’artisan'],
+  [/restaurant|restauration|pizzeria/, 'votre restaurant'],
+  [/boulang|patiss/, 'votre boulangerie'],
+  [/traiteur/, 'votre activité de traiteur'],
+  [/coach/, 'votre activité de coach'],
+  [/photograph/, 'votre activité de photographe'],
+  [/architect/, 'votre cabinet d’architecte'],
+  [/therapeut|psycholog|sophrolog|naturopath|osteopath/, 'votre cabinet'],
+  [/coiff/, 'votre salon de coiffure'],
+  [/barbier/, 'votre barbier'],
+  [/plomb/, 'votre entreprise de plomberie'],
+  [/electric/, 'votre entreprise d’électricité'],
+  [/nettoyage|menage|proprete/, 'votre entreprise de nettoyage'],
+  [/immobili/, 'votre agence immobilière'],
+];
+function initMessageMatch() {
+  const q = new URLSearchParams(location.search);
+  const term = plain([q.get('utm_term'), q.get('offre'), q.get('metier')].filter(Boolean).join(' '));
+  const line = $('[data-mm="line"]');
+  const price = $('[data-mm="price"]');
+  if (!term || !line || !price) return;
+  if (/e-?commerce|boutique en ligne|vente en ligne/.test(term)) {
+    line.textContent = 'Votre boutique en ligne sur-mesure, livrée en 1 à 3 semaines.';
+    price.textContent = 'Projet sur-mesure, sur devis : paiement, espace client, dashboard';
+    preselect('type', 'E-commerce');
+    preselect('budget', 'Sur devis');
+    return;
+  }
+  const trade = MM_TRADES.find(([re]) => re.test(term));
+  const redo = /refonte|refaire|moderniser|nouveau site/.test(term);
+  if (redo) {
+    line.textContent = 'Refonte de site : un nouveau site vitrine 100 % sur-mesure, livré en 5 à 7 jours.';
+    preselect('type', 'Refonte de site');
+  } else if (trade) {
+    line.textContent = `Le site vitrine sur-mesure de ${trade[1]}, livré en 5 à 7 jours.`;
+  }
+  if (/abonnement|mensuel|par mois|au mois|location|louer|cle en main|tout compris/.test(term)) {
+    if (!trade && !redo) line.textContent = 'Votre site vitrine clé en main, tout compris, livré en 5 à 7 jours.';
+    price.textContent = '450 € puis 28 €/mois : hébergement, domaine et modifications illimitées inclus';
+    preselect('budget', 'Abonnement · 450 € puis 28 €/mois');
+  } else if (/prix|tarif|cout|combien|pas cher/.test(term)) {
+    price.textContent = 'Prix fixe : 750 € une seule fois, ou 450 € puis 28 €/mois tout compris';
+  }
+}
+
 function initContact() {
   // chips: an ember drop slides to the chosen option, stretching on the way like a liquid
   $$('.chips').forEach((group) => {
@@ -2528,41 +2598,40 @@ function initContact() {
     if (field) {
       const k = e.target.name;
       const val = String(e.target.value || '').trim();
-      if (val && (k !== 'email' || emailOk(val))) field.classList.remove('is-error');
+      if (val && (k !== 'email' || emailOk(val))) {
+        field.classList.remove('is-error');
+        e.target.removeAttribute('aria-invalid');
+      }
     }
   });
   level();
 
-  // The request is posted to the site itself (Netlify Forms: the form is declared in
-  // index.html). If that fails — no network, or the forms not switched on in Netlify yet (it
-  // then answers 404/405, or the page itself) — the visitor's mail app opens with the request
-  // written out, as before.
+  // The request is posted to the site itself (Netlify Forms, form « devis » declared in
+  // index.html): Netlify emails it (Forms → Submission notifications) and keeps it. The visitor
+  // never leaves the page and no mail app is ever opened: if the send fails, they are told so
+  // on the spot, their text stays in the form, WhatsApp and mail offered beside it.
   // Where the request comes from, read from the address bar when it is sent (an ad click
   // carries utm_* and gclid in it): no cookie, nothing kept on the visitor's device.
-  const origin = () => {
+  const AD_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'gclid', 'gbraid', 'wbraid'];
+  const adParams = () => {
     const q = new URLSearchParams(location.search);
-    const parts = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map((k) => q.get(k)).filter(Boolean);
-    const gclid = q.get('gclid');
-    if (!parts.length && !gclid) return 'Direct ou recherche naturelle';
-    return [parts.join(' / '), gclid ? `gclid=${gclid}` : ''].filter(Boolean).join(' · ').slice(0, 400);
+    const p = {};
+    AD_KEYS.forEach((k) => {
+      const v = (q.get(k) || '').trim();
+      if (v) p[k] = v.slice(0, 500);
+    });
+    return p;
   };
-  const mailto = (data) => {
-    const subject = `Demande de devis — ${data.get('type')}`;
-    const body = [
-      `Nom : ${data.get('name')}`,
-      `Email : ${data.get('email')}`,
-      `Type de projet : ${data.get('type')}`,
-      `Budget : ${data.get('budget')}`,
-      `Source : ${data.get('source')}`,
-      '',
-      String(data.get('message')),
-    ].join('\n');
-    window.location.href = `mailto:contact@kalionstudio.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    toast('Votre messagerie s’ouvre avec votre demande');
+  const origin = (p) => {
+    const parts = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map((k) => p[k]).filter(Boolean);
+    const click = ['gclid', 'gbraid', 'wbraid'].filter((k) => p[k]).map((k) => `${k}=${p[k]}`)[0] || '';
+    if (!parts.length && !click) return 'Direct ou recherche naturelle';
+    return [parts.join(' / '), click].filter(Boolean).join(' · ');
   };
+  // 'ok' | 'slow' (no answer within 15 s: it may still have arrived) | 'fail'
   const post = async (data) => {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 8000);
+    const timer = setTimeout(() => ctl.abort(), 15000);
     try {
       const res = await fetch('/', {
         method: 'POST',
@@ -2570,14 +2639,14 @@ function initContact() {
         body: new URLSearchParams(data).toString(),
         signal: ctl.signal,
       });
-      if (!res.ok) return false;
-      // (Netlify answers a received form with its own short page; the page itself coming back
+      if (!res.ok) return 'fail';
+      // (Netlify answers a received request with its own short page; the page itself coming back
       // — its contact section in it — means nothing took the form. Not data-netlify: Netlify
       // strips that attribute from the deployed page once forms are switched on.)
       const text = await res.text();
-      return !text.includes('id="contact"');
-    } catch {
-      return false;
+      return text.includes('id="contact"') ? 'fail' : 'ok';
+    } catch (err) {
+      return err && err.name === 'AbortError' ? 'slow' : 'fail';
     } finally {
       clearTimeout(timer);
     }
@@ -2586,42 +2655,89 @@ function initContact() {
   const resetForm = () => {
     form.reset();
     $$('.field.is-error', form).forEach((f) => f.classList.remove('is-error'));
+    $$('[aria-invalid]', form).forEach((el) => el.removeAttribute('aria-invalid'));
     $$('.chips', form).forEach((g) => g.dispatchEvent(new Event('change')));
     level();
   };
+  const label = $('.send__label', send);
+  const LABEL = label.textContent;
+  const status = $('.form__status', form);
+  const STATUS = status.innerHTML;
+  const WA = 'https://wa.me/33658234103?text=Bonjour%20Kalion%20Studio%2C%20je%20souhaite%20un%20devis%20pour%20mon%20site%20internet.';
+  const REACH = `Écrivez-nous&nbsp;: <a href="${WA}" target="_blank" rel="noopener">WhatsApp</a> · <a href="mailto:contact@kalionstudio.com">Mail</a>`;
   let sending = false;
+  let restore = 0;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (sending) return;
+    // (a new attempt within the 8 s of a "sent" state: the button and the status come back now)
+    if (restore) {
+      clearTimeout(restore);
+      restore = 0;
+      label.textContent = LABEL;
+      status.innerHTML = STATUS;
+    }
     const data = new FormData(form);
-    data.set('source', origin());
-    let ok = true;
-    ['name', 'email', 'message'].forEach((k) => {
-      const field = form.elements[k].closest('.field');
+    // the fields to fix: flagged (colour + aria-invalid), the first one given the focus
+    const bad = ['name', 'email', 'message'].filter((k) => {
+      const input = form.elements[k];
       const val = String(data.get(k) || '').trim();
-      const bad = !val || (k === 'email' && !emailOk(val));
-      field.classList.toggle('is-error', bad);
-      if (bad) ok = false;
+      const wrong = !val || (k === 'email' && !emailOk(val));
+      input.closest('.field').classList.toggle('is-error', wrong);
+      if (wrong) input.setAttribute('aria-invalid', 'true');
+      else input.removeAttribute('aria-invalid');
+      return wrong;
     });
-    if (!ok) {
-      toast('Merci de compléter les champs indiqués');
+    if (bad.length) {
+      const typo = bad.includes('email') && String(data.get('email') || '').trim();
+      toast(typo ? 'Vérifiez votre adresse e-mail' : 'Merci de compléter les champs indiqués', 4000);
+      form.elements[bad[0]].focus({ preventScroll: true });
       return;
     }
     // (the hidden spam trap filled in: a robot — nothing is sent)
     if (String(data.get('bot-field') || '').trim()) {
-      toast('Merci ! Votre demande est envoyée, réponse sous 24 h.');
+      toast('Merci ! Votre demande est bien envoyée. Réponse sous 24 h.', 7000);
       resetForm();
       return;
     }
+    const p = adParams();
+    data.set('source', origin(p));
+    // (kept apart for a Google Ads conversion import; Netlify keeps only the fields declared in
+    // index.html)
+    ['gclid', 'gbraid', 'wbraid', 'utm_term'].forEach((k) => data.set(k, p[k] || ''));
+    // the notification mail's subject: the project, the name, the search that brought them
+    const who = String(data.get('name')).trim().slice(0, 60);
+    data.set('subject', `Devis ${data.get('type')} · ${who}${p.utm_term ? ` · Google « ${p.utm_term.slice(0, 80)} »` : ''}`);
+
     sending = true;
     send.setAttribute('aria-busy', 'true');
-    const sent = await post(data);
+    label.textContent = 'Envoi en cours…';
+    const result = await post(data);
     sending = false;
     send.removeAttribute('aria-busy');
-    if (!sent) return mailto(data);
-    toast('Merci ! Votre demande est envoyée, réponse sous 24 h.');
-    resetForm();
+
+    if (result === 'ok') {
+      resetForm();
+      label.textContent = 'Demande envoyée ✓';
+      status.innerHTML = '<i class="dot"></i>Bien reçu · Réponse sous 24&nbsp;h';
+      toast('Merci ! Votre demande est bien envoyée. Réponse sous 24 h.', 7000);
+      restore = setTimeout(() => {
+        restore = 0;
+        label.textContent = LABEL;
+        status.innerHTML = STATUS;
+      }, 8000);
+      return;
+    }
+    // not sent (or no answer): the text stays, the visitor is told and given the other ways
+    label.textContent = 'Réessayer';
+    status.innerHTML = REACH;
+    toast(
+      result === 'slow'
+        ? 'Le réseau est lent : votre demande est peut-être partie. Dans le doute, réessayez ou écrivez-nous sur WhatsApp.'
+        : 'Envoi impossible pour le moment. Réessayez, ou écrivez-nous sur WhatsApp au 06 58 23 41 03.',
+      9000
+    );
   });
 
   initContactScene();
@@ -2638,6 +2754,9 @@ function initContact() {
      it, flap after flap, and the ways to reach us come in beside it.
 ------------------------------------------------------------------ */
 let contactY = null; // scroll position where the letter is open (nav links)
+// (phone: a quote button was used — the letter arrives already unfolded, until the visitor
+// scrolls away from it)
+let letterHeld = false;
 
 // On a phone the letter is taller than the screen: nothing is pinned. The two words meet
 // as the title comes up the screen, the FAQ's drop falls onto its full stop, then the
@@ -2652,7 +2771,7 @@ function initContactMobile() {
   const f1 = $('.fold--1');
   const f3 = $('.fold--3');
   const seal = $('.letter__seal');
-  const side = [$('.contact__lead'), ...$$('.channel')];
+  const side = [$('.contact__lead'), $('.contact__proof'), ...$$('.channel')];
   const fly = $('.fly-drop');
   const faqHead = $('.faq__drip-drop');
   const seg = (v, a, b) => clamp((v - a) / (b - a), 0, 1);
@@ -2663,7 +2782,9 @@ function initContactMobile() {
   const measure = () => (titleY = title.getBoundingClientRect().top + window.scrollY);
   measure();
   ScrollTrigger.addEventListener('refresh', measure);
-  contactY = () => titleY - 96;
+  // (the quote buttons: land on the letter itself, its top under the bar — both flaps are then
+  // open or nearly, the name field ready to type)
+  contactY = () => layoutTop(letter) - 84;
   // keyboard (see initKeyboard): a control is reached in the middle of the screen, the letter
   // far enough up for its flap to be open (see lp below: the top flap opens at 0.65, the
   // bottom one at 0.95)
@@ -2719,11 +2840,18 @@ function initContactMobile() {
     // transforms set here, which would feed back into the progress)
     const pinTop = pinEl.getBoundingClientRect().top;
     const lp = seg(pinTop + letter.offsetTop + letter.offsetHeight / 2, H * 1.25, H * 0.45);
-    const come = easeOut(seg(lp, 0, 0.35));
+    // (a field has the focus — the keyboard may have moved the page —: the letter stays open;
+    // reduced motion: it never folds)
+    const typing = letter.contains(document.activeElement);
+    // (arrived by a quote button: open until the visitor has scrolled the letter off the screen —
+    // it fades out before it folds back)
+    if (letterHeld && lenis.isScrolling !== 'smooth' && lp <= 0) letterHeld = false;
+    const hold = reduced || typing || letterHeld;
+    const come = typing ? 1 : easeOut(seg(lp, 0, 0.35));
     css(letter, 'transform', come < 0.999 ? `perspective(1400px) translate3d(0, ${((1 - come) * 18).toFixed(2)}vh, 0) rotateX(${((1 - come) * 40).toFixed(2)}deg)` : 'none');
-    css(letter, 'opacity', seg(lp, 0, 0.22).toFixed(3));
-    turn(f1, -180 * (1 - easeInOutCubic(seg(lp, 0.3, 0.65))), 2);
-    turn(f3, 180 * (1 - easeInOutCubic(seg(lp, 0.55, 0.95))), 1);
+    css(letter, 'opacity', typing ? '1' : seg(lp, 0, 0.22).toFixed(3));
+    turn(f1, hold ? 0 : -180 * (1 - easeInOutCubic(seg(lp, 0.3, 0.65))), 2);
+    turn(f3, hold ? 0 : 180 * (1 - easeInOutCubic(seg(lp, 0.55, 0.95))), 1);
     css(seal, 'transform', `scale(${(1 - seg(lp, 0.3, 0.4)).toFixed(3)})`);
 
     // --- the words around it, as they come up ---
@@ -2747,7 +2875,7 @@ function initContactScene() {
   const f1 = $('.fold--1');
   const f3 = $('.fold--3');
   const seal = $('.letter__seal');
-  const side = [$('.contact__lead'), ...$$('.channel')];
+  const side = [$('.contact__lead'), $('.contact__proof'), ...$$('.channel')];
   const fly = $('.fly-drop');
   const faqHead = $('.faq__drip-drop');
   const seg = (v, a, b) => clamp((v - a) / (b - a), 0, 1);
@@ -2832,8 +2960,10 @@ function initContactScene() {
     const come = easeOut(seg(u, 0.4, 0.88));
     css(letter, 'transform', come < 0.999 ? `perspective(1600px) translate3d(0, ${((1 - come) * 62).toFixed(2)}vh, 0) rotateX(${((1 - come) * 48).toFixed(2)}deg)` : 'none');
     css(letter, 'opacity', seg(u, 0.4, 0.6).toFixed(3));
-    const open1 = easeInOutCubic(seg(u, 0.84, 1.12));
-    const open3 = easeInOutCubic(seg(u, 1.06, 1.36));
+    // (a field has the focus: its flaps stay open; reduced motion: they never fold)
+    const hold = reduced || letter.contains(document.activeElement);
+    const open1 = hold ? 1 : easeInOutCubic(seg(u, 0.84, 1.12));
+    const open3 = hold ? 1 : easeInOutCubic(seg(u, 1.06, 1.36));
     turn(f1, -180 * (1 - open1), 2);
     turn(f3, 180 * (1 - open3), 1);
     css(seal, 'transform', `scale(${(1 - seg(u, 0.84, 0.92)).toFixed(3)})`);
@@ -3016,6 +3146,9 @@ const firstPaint = () =>
   });
 
 async function boot() {
+  // (under the preloader: the hero's words and the form's chips are set before anything shows;
+  // the chips' drops read them in initContact)
+  initMessageMatch();
   // The preloader is on screen from the very first frame (index.html) and its counter
   // rolls on its own. Each WebGL scene is started in its own frame (their shaders then
   // compile in the background), the heaviest first (the projects' 3D title and its
@@ -3055,19 +3188,33 @@ async function boot() {
   initKeyboard();
   await nextFrame();
 
-  // everything is ready: the counter runs to 100 (the logo stays at least a moment), and
-  // the page opens straight away
-  await wait(FAST ? 0 : Math.max(0, 900 - performance.now()));
+  // No opening for a link straight to a section (the ads' sitelinks /#tarifs, /#contact…: the
+  // page lands on it at once), a reload or a return from another page, or "reduce motion":
+  // the preloader fades out over the page, already in place.
+  if (!FAST && (deepLink || RETURNING || reduced)) {
+    const loader = $('.loader');
+    openWithoutIntro(true);
+    if (loader) {
+      loader.style.transition = 'opacity 0.4s ease';
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 450);
+    }
+    return;
+  }
+
+  // everything is ready: the counter runs to 100 (the logo stays at least a moment — not for a
+  // visitor from an ad: the opening is quicker), and the page opens straight away
+  await wait(FAST || AD ? 0 : Math.max(0, 900 - performance.now()));
   // (very slow device: public/boot-guard.js may have opened the page already)
   if (!$('.loader')) return openWithoutIntro();
-  await finishCounter(FAST ? 0.01 : 0.5);
+  await finishCounter(FAST ? 0.01 : AD ? 0.25 : 0.5);
   await wait(FAST ? 0 : 60);
   if (!$('.loader')) return openWithoutIntro();
-  playIntro();
+  playIntro(AD ? 1.5 : 1);
 }
 
-// the page without its opening (the preloader is already gone)
-function openWithoutIntro() {
+// the page without its opening (the preloader is already gone, or fading out over it)
+function openWithoutIntro(jump = false) {
   window.__kalionOpened = true;
   root.classList.remove('boot-fallback');
   if (gl) {
@@ -3077,7 +3224,7 @@ function openWithoutIntro() {
   navIn();
   lenis.start();
   if (quality.arm) quality.arm();
-  goToDeepLink();
+  goToDeepLink(jump);
 }
 
 boot();

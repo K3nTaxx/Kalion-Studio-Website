@@ -27,6 +27,7 @@ html { -webkit-tap-highlight-color: transparent; }
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
+  html:has(input:focus, textarea:focus) .rotate { display: none; }
   .rotate__k { width: 44px; height: auto; animation: rotate-k 2.4s var(--ease) infinite; }
   @keyframes rotate-k {
     0%, 30% { transform: rotate(0); }
@@ -182,10 +183,20 @@ html.is-mobile .grain { inset: 0; animation: none; opacity: 0.45; }
   .hero__bottom {
     left: var(--pad);
     right: var(--pad);
-    bottom: calc(var(--bar) + 30px);
-    display: flex;
-    justify-content: center;
+    bottom: calc(var(--bar) + 26px);
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
   }
+  .hero__offer { max-width: none; justify-items: center; gap: 9px; }
+  .hero__line { font-size: min(7.4vw, 4.2vh); line-height: 1.08; }
+  .hero__price { font-size: 10.5px; line-height: 1.9; }
+  .hero__proof { font-size: 10px; }
+  .hero__ctas { gap: 8px; max-width: 100%; }
+  .hero__ctas .btn { padding: 0 6px 0 18px; font-size: 14px; gap: 0.6em; }
+  @media (max-width: 380px) { .hero__ctas .btn { padding-left: 14px; font-size: 13px; } }
+  .hero__ctas > .btn.m-only { display: inline-flex; }
 
   /* ---------- manifesto ---------- */
   .about__pin { gap: 7vw; padding: 0 var(--pad); }
@@ -316,6 +327,7 @@ html.is-mobile .grain { inset: 0; animation: none; opacity: 0.45; }
   .contact__title { position: static; font-size: 13vw; }
   .contact__side { display: contents; }
   .contact__lead { order: 1; max-width: none; font-size: 15px; }
+  .contact__proof { order: 1; margin-top: -2vw; font-size: 11px; }
   .letter { order: 2; }
   .contact__channels { order: 3; margin-top: 2vw; }
   .channel { gap: 4vw; padding: 4.4vw 1vw 4.4vw 0; }
@@ -332,12 +344,13 @@ html.is-mobile .grain { inset: 0; animation: none; opacity: 0.45; }
   .letter__word { font-size: 20px; }
   .form__row { grid-template-columns: 1fr; gap: 5vw; }
   .field { gap: 1.4vw; }
-  .field__label { margin-bottom: 0.6vw; }
+  .field__label { margin-bottom: 0.6vw; font-size: 11px; }
+  .form__status { font-size: 11px; }
   /* (16px at least: iOS zooms into smaller fields) */
   .field input,
   .field textarea { padding: 1.8vw 0 2.6vw; font-size: 16px; }
   .chips { gap: 2vw; }
-  .chips span { padding: 2.3vw 3.8vw; font-size: 13px; }
+  .chips span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 3.8vw; font-size: 13px; }
   .form__foot { flex-direction: column; align-items: stretch; gap: 4.6vw; margin-top: 1vw; }
   .send { justify-content: center; height: 54px; padding: 0 5vw; font-size: 15px; }
 
