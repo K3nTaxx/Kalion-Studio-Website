@@ -2508,12 +2508,14 @@ function initContact() {
   const send = $('.send');
   const pct = $('.send__pct');
   const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  // (a few words about the project are enough: the button is full as soon as the three
+  // fields hold something, the email in a valid shape)
   const level = () => {
     const d = new FormData(form);
     let n = 0;
-    if (String(d.get('name') || '').trim().length > 1) n++;
+    if (String(d.get('name') || '').trim()) n++;
     if (emailOk(String(d.get('email') || '').trim())) n++;
-    if (String(d.get('message') || '').trim().length > 9) n++;
+    if (String(d.get('message') || '').trim()) n++;
     const v = n / 3;
     send.style.setProperty('--lvl', v.toFixed(3));
     send.classList.toggle('is-full', v >= 1);
@@ -2570,9 +2572,10 @@ function initContact() {
       });
       if (!res.ok) return false;
       // (Netlify answers a received form with its own short page; the page itself coming back
-      // — data-netlify still in it — means nothing took the form)
+      // — its contact section in it — means nothing took the form. Not data-netlify: Netlify
+      // strips that attribute from the deployed page once forms are switched on.)
       const text = await res.text();
-      return !text.includes('data-netlify');
+      return !text.includes('id="contact"');
     } catch {
       return false;
     } finally {

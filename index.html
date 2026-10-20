@@ -369,7 +369,7 @@
         <span class="btn__label">Demander un devis</span>
         <span class="btn__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8" /></svg></span>
       </a>
-      <p class="menu__reach mono"><a href="https://wa.me/33658234103" target="_blank" rel="noopener">WhatsApp</a><a href="mailto:contact@kalionstudio.com">Mail</a></p>
+      <p class="menu__reach mono"><a href="https://wa.me/33658234103" target="_blank" rel="noopener">WhatsApp</a><a href="mailto:contact@kalionstudio.com">Mail</a><a href="https://www.instagram.com/kalion.studio/" target="_blank" rel="noopener me">Instagram</a></p>
     </div>
   </div>
 
@@ -789,6 +789,9 @@
             <a class="channel" href="mailto:contact@kalionstudio.com">
               <span class="channel__name">Mail</span><span class="channel__value mono">contact@kalionstudio.com</span><span class="channel__arrow" aria-hidden="true">↗</span>
             </a>
+            <a class="channel" href="https://www.instagram.com/kalion.studio/" target="_blank" rel="noopener me">
+              <span class="channel__name">Instagram</span><span class="channel__value mono">@kalion.studio</span><span class="channel__arrow" aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
 
@@ -798,6 +801,8 @@
             <input type="hidden" name="form-name" value="devis" />
             <!-- where the visitor came from (Google Ads keyword, campaign…), read from the address at sending time: nothing is stored -->
             <input type="hidden" name="source" value="" />
+            <!-- subject of the notification mail Netlify sends for each request -->
+            <input type="hidden" name="subject" value="Nouvelle demande de devis · Kalion Studio" />
             <!-- (a trap for spam robots: hidden from people and screen readers, left empty) -->
             <p class="sr-only" aria-hidden="true" data-nosnippet><label>Ne pas remplir : <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
             <div class="fold fold--1">
@@ -887,6 +892,7 @@
           <span class="mono">Nous contacter</span>
           <a href="https://wa.me/33658234103" target="_blank" rel="noopener">WhatsApp</a>
           <a href="mailto:contact@kalionstudio.com">Mail</a>
+          <a href="https://www.instagram.com/kalion.studio/" target="_blank" rel="noopener me">Instagram</a>
         </div>
         <div class="footer__col">
           <span class="mono">Informations</span>
