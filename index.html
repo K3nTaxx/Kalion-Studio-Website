@@ -802,6 +802,8 @@
           <!-- sent to Netlify Forms (main.js posts it; the mail app opens instead if that fails) -->
           <form class="form" name="devis" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
             <input type="hidden" name="form-name" value="devis" />
+            <!-- where the visitor came from (Google Ads keyword, campaign…), read from the address at sending time: nothing is stored -->
+            <input type="hidden" name="source" value="" />
             <!-- (a trap for spam robots: hidden from people and screen readers, left empty) -->
             <p class="sr-only" aria-hidden="true" data-nosnippet><label>Ne pas remplir : <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
             <div class="fold fold--1">

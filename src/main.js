@@ -2547,6 +2547,15 @@ function initContact() {
   // index.html). If that fails — no network, or the forms not switched on in Netlify yet (it
   // then answers 404/405, or the page itself) — the visitor's mail app opens with the request
   // written out, as before.
+  // Where the request comes from, read from the address bar when it is sent (an ad click
+  // carries utm_* and gclid in it): no cookie, nothing kept on the visitor's device.
+  const origin = () => {
+    const q = new URLSearchParams(location.search);
+    const parts = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].map((k) => q.get(k)).filter(Boolean);
+    const gclid = q.get('gclid');
+    if (!parts.length && !gclid) return 'Direct ou recherche naturelle';
+    return [parts.join(' / '), gclid ? `gclid=${gclid}` : ''].filter(Boolean).join(' · ').slice(0, 400);
+  };
   const mailto = (data) => {
     const subject = `Demande de devis — ${data.get('type')}`;
     const body = [
@@ -2554,6 +2563,7 @@ function initContact() {
       `Email : ${data.get('email')}`,
       `Type de projet : ${data.get('type')}`,
       `Budget : ${data.get('budget')}`,
+      `Source : ${data.get('source')}`,
       '',
       String(data.get('message')),
     ].join('\n');
@@ -2594,6 +2604,7 @@ function initContact() {
     e.preventDefault();
     if (sending) return;
     const data = new FormData(form);
+    data.set('source', origin());
     let ok = true;
     ['name', 'email', 'message'].forEach((k) => {
       const field = form.elements[k].closest('.field');
