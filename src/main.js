@@ -80,9 +80,6 @@ window.__kalionStarted = true; // (public/boot-guard.js: the script runs)
 // dev only: http://localhost:5188/?fast skips the preloader choreography
 const FAST = import.meta.env.DEV && new URLSearchParams(location.search).has('fast');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-// a visitor from an ad (Google Ads adds gclid / gbraid / wbraid, the campaign its utm_*): the
-// same opening, quicker (read from the address only, nothing kept)
-const AD = /[?&](gclid|gbraid|wbraid|utm_source)=/.test(location.search);
 // a reload, or a return from another page of the site (back / forward): the opening was already
 // seen (the browser's own navigation type, nothing stored)
 const NAV_TYPE = ((performance.getEntriesByType && performance.getEntriesByType('navigation')[0]) || {}).type;
@@ -914,8 +911,8 @@ function playIntro(speed = 1) {
       el.remove();
       if (quality.arm) quality.arm();
       goToDeepLink(); // (a link to a section: on to it, now that the page is open)
-    }, UI + 0.3);
-  if (speed !== 1) tl.timeScale(speed); // (a visitor from an ad: the same choreography, quicker)
+    }, UI); // (the page scrolls as soon as the interface comes in)
+  if (speed !== 1) tl.timeScale(speed); // (the same choreography, played quicker)
   if (FAST) tl.progress(1);
 }
 
@@ -3165,15 +3162,12 @@ async function boot() {
     return;
   }
 
-  // everything is ready: the counter runs to 100 (the logo stays at least a moment — not for a
-  // visitor from an ad: the opening is quicker), and the page opens straight away
-  await wait(FAST || AD ? 0 : Math.max(0, 900 - performance.now()));
-  // (very slow device: public/boot-guard.js may have opened the page already)
+  // everything is ready: the counter runs to 100 at once and the page opens straight away —
+  // the same opening for everyone, played twice as fast (the wait is the loading, not the show)
+  if (!$('.loader')) return openWithoutIntro(); // (very slow device: public/boot-guard.js opened it)
+  await finishCounter(FAST ? 0.01 : 0.2);
   if (!$('.loader')) return openWithoutIntro();
-  await finishCounter(FAST ? 0.01 : AD ? 0.25 : 0.5);
-  await wait(FAST ? 0 : 60);
-  if (!$('.loader')) return openWithoutIntro();
-  playIntro(AD ? 1.5 : 1);
+  playIntro(2.2);
 }
 
 // the page without its opening (the preloader is already gone, or fading out over it)
