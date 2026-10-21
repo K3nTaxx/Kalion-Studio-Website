@@ -762,64 +762,70 @@ async function initGL() {
 ------------------------------------------------------------------ */
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The counter follows the real loading. The CSS rolls it from the very first frame (index.html);
-// once this script runs it takes over: each part that is ready (the fonts, then each WebGL
-// scene) lets it climb further, it keeps creeping between two of them — never frozen — and it
-// only reaches 100 when everything is ready, with a short smooth finish.
+// The counter rolls on the browser's compositor (CSS, index.html): the heavy work of loading —
+// the shaders compiling — can't make it stutter. It follows the real loading through its
+// speed alone: each part that is ready (the fonts, then each WebGL scene) makes it roll a little
+// faster; once everything is ready it runs to 100 within a short, smooth finish.
 function loaderCounter(parts) {
-  const strips = ['h', 't', 'u'].map((k) => $(`.loader__strip--${k}`));
-  if (strips.some((el) => !el)) return { step() {}, finish: () => Promise.resolve() };
-  const cell = 1.15; // em (index.html)
-  // where the CSS has got to
-  let v = 0;
-  try {
-    const em = parseFloat(getComputedStyle(strips[1]).fontSize) || 16;
-    const idx = (el) => Math.round(-new DOMMatrixReadOnly(getComputedStyle(el).transform).m42 / em / cell);
-    v = Math.min(9, Math.max(0, idx(strips[1]))) * 10 + (Math.max(0, idx(strips[2])) % 10);
-  } catch (e) {}
-  strips.forEach((el) => (el.style.animation = 'none'));
-  let shown = -1;
-  const show = (n) => {
-    n = Math.max(0, Math.min(100, Math.floor(n)));
-    if (n === shown) return;
-    shown = n;
-    strips[0].style.transform = `translateY(${n === 100 ? -cell : 0}em)`;
-    strips[1].style.transform = `translateY(${(n === 100 ? -10 : -Math.floor(n / 10)) * cell}em)`;
-    strips[2].style.transform = `translateY(${-(n % 10) * cell}em)`;
-  };
-  show(v);
+  const strips = $$('.loader__strip--t, .loader__strip--u');
+  const anims = strips.flatMap((el) => (el.getAnimations ? el.getAnimations() : []));
   let done = 0;
-  let creep = 0; // (between two parts: a slow climb, a little less each second)
-  let last = performance.now();
-  let finishing = false;
-  const tick = (now) => {
-    if (finishing) return;
-    const dt = Math.min(0.1, (now - last) / 1000);
-    last = now;
-    creep += dt * 6 * Math.max(0.15, 1 - creep / 12);
-    const target = Math.min(96, 12 + (84 * done) / parts + creep);
-    v += (Math.max(v, target) - v) * Math.min(1, dt * 5);
-    show(v);
-    requestAnimationFrame(tick);
+  const end = () => {
+    strips.forEach((el) => (el.style.animation = 'none'));
+    const cell = 1.15; // em (index.html)
+    $('.loader__strip--h').style.transform = `translateY(${-cell}em)`; // 1
+    $('.loader__strip--t').style.transform = `translateY(${-10 * cell}em)`; // 0
+    $('.loader__strip--u').style.transform = 'translateY(0)'; // 0
   };
-  requestAnimationFrame(tick);
   return {
     step() {
       done += 1;
-      creep = 0;
+      const rate = 1 + 2 * (done / parts);
+      anims.forEach((a) => a.playState === 'running' && a.updatePlaybackRate(rate));
     },
     finish(within = 0.4) {
-      finishing = true;
-      const o = { v };
-      return new Promise((resolve) => {
-        if (within <= 0.02) {
-          show(100);
-          return resolve();
-        }
-        gsap.to(o, { v: 100, duration: within, ease: 'power1.out', onUpdate: () => show(o.v), onComplete: () => (show(100), resolve()) });
+      if (!anims.length) {
+        end();
+        return Promise.resolve();
+      }
+      anims.forEach((a) => {
+        const total = a.effect.getComputedTiming().duration;
+        const left = (total - (a.currentTime || 0)) / 1000;
+        if (left > within) a.updatePlaybackRate(left / Math.max(within, 0.01));
       });
+      return Promise.all(anims.map((a) => a.finished.catch(() => {}))).then(end);
     },
   };
+}
+
+// The page opens straight onto the liquid word: the preloader fades away while the drops burst
+// out of the middle and form « Kalion Studio »; the menu, the button and the side indicator come
+// in once the word has formed.
+function openWithWord() {
+  window.__kalionOpened = true; // (public/boot-guard.js: nothing to do)
+  root.classList.remove('boot-fallback');
+  const el = $('.loader');
+  if (gl) {
+    gl.hold = false;
+    gl.assemble(0, 0);
+  }
+  if (el) {
+    el.style.transition = 'opacity 0.5s ease';
+    el.style.opacity = '0';
+    setTimeout(() => el.remove(), 550);
+  }
+  const UI = gl ? 1.5 : 0.3; // (the word has formed: the interface comes in)
+  gsap
+    .timeline()
+    .add(() => navIn(), UI)
+    .fromTo('.hero__bottom .btn', { clipPath: 'inset(0% 100% 0% 0% round 100px)' }, { clipPath: 'inset(0% 0% 0% 0% round 100px)', duration: 1.1, ease: 'expo.inOut', clearProps: 'clipPath' }, UI + 0.25)
+    .from('.hero__bottom .btn__label', { yPercent: 120, duration: 1, ease: 'expo.out', clearProps: 'transform' }, UI + 0.55)
+    .from('.hero__bottom .btn__icon', { scale: 0, rotate: -120, duration: 1, ease: 'back.out(1.8)', clearProps: 'transform' }, UI + 0.65)
+    .from('.indicator', { opacity: 0, duration: 1.2, ease: 'power2.out', clearProps: 'opacity' }, UI + 0.4)
+    .add(() => {
+      lenis.start();
+      if (quality.arm) quality.arm();
+    }, UI);
 }
 
 function playIntro(speed = 1) {
@@ -3199,13 +3205,12 @@ async function boot() {
     return;
   }
 
-  // everything is ready: the counter rolls on to 100 (a short, smooth finish, never a jump) and
-  // the page opens straight away, the dive into the « i » at its own pace
+  // everything is ready: the counter rolls on to 100 (a short, smooth finish) and the page opens
+  // straight onto the liquid word forming
   if (!$('.loader')) return openWithoutIntro(); // (very slow device: public/boot-guard.js opened it)
-  await counter.finish(FAST ? 0.01 : 0.4);
-  await wait(FAST ? 0 : 60);
+  await counter.finish(FAST ? 0.01 : 0.35);
   if (!$('.loader')) return openWithoutIntro();
-  playIntro();
+  openWithWord();
 }
 
 // the page without its opening (the preloader is already gone, or fading out over it)
