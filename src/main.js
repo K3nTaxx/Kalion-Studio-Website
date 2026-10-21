@@ -798,36 +798,6 @@ function loaderCounter(parts) {
   };
 }
 
-// The page opens straight onto the liquid word: the preloader fades away while the drops burst
-// out of the middle and form « Kalion Studio »; the menu, the button and the side indicator come
-// in once the word has formed.
-function openWithWord() {
-  window.__kalionOpened = true; // (public/boot-guard.js: nothing to do)
-  root.classList.remove('boot-fallback');
-  const el = $('.loader');
-  if (gl) {
-    gl.hold = false;
-    gl.assemble(0, 0);
-  }
-  if (el) {
-    el.style.transition = 'opacity 0.5s ease';
-    el.style.opacity = '0';
-    setTimeout(() => el.remove(), 550);
-  }
-  const UI = gl ? 1.5 : 0.3; // (the word has formed: the interface comes in)
-  gsap
-    .timeline()
-    .add(() => navIn(), UI)
-    .fromTo('.hero__bottom .btn', { clipPath: 'inset(0% 100% 0% 0% round 100px)' }, { clipPath: 'inset(0% 0% 0% 0% round 100px)', duration: 1.1, ease: 'expo.inOut', clearProps: 'clipPath' }, UI + 0.25)
-    .from('.hero__bottom .btn__label', { yPercent: 120, duration: 1, ease: 'expo.out', clearProps: 'transform' }, UI + 0.55)
-    .from('.hero__bottom .btn__icon', { scale: 0, rotate: -120, duration: 1, ease: 'back.out(1.8)', clearProps: 'transform' }, UI + 0.65)
-    .from('.indicator', { opacity: 0, duration: 1.2, ease: 'power2.out', clearProps: 'opacity' }, UI + 0.4)
-    .add(() => {
-      lenis.start();
-      if (quality.arm) quality.arm();
-    }, UI);
-}
-
 function playIntro(speed = 1) {
   window.__kalionOpened = true; // (public/boot-guard.js: nothing to do)
   const W = window.innerWidth;
@@ -3205,12 +3175,13 @@ async function boot() {
     return;
   }
 
-  // everything is ready: the counter rolls on to 100 (a short, smooth finish) and the page opens
-  // straight onto the liquid word forming
+  // everything is ready: the counter rolls on to 100 (a short, smooth finish) and, at 100, the
+  // opening: the dive into the dot of the « i », at its own pace
   if (!$('.loader')) return openWithoutIntro(); // (very slow device: public/boot-guard.js opened it)
   await counter.finish(FAST ? 0.01 : 0.35);
+  await wait(FAST ? 0 : 60);
   if (!$('.loader')) return openWithoutIntro();
-  openWithWord();
+  playIntro();
 }
 
 // the page without its opening (the preloader is already gone, or fading out over it)
