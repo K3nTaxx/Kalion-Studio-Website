@@ -3162,12 +3162,13 @@ async function boot() {
     return;
   }
 
-  // everything is ready: the counter runs to 100 at once and the page opens straight away —
-  // the same opening for everyone, played twice as fast (the wait is the loading, not the show)
+  // everything is ready: the counter rolls on to 100 (a short, smooth finish, never a jump) and
+  // the page opens straight away, the dive into the « i » at its own pace
   if (!$('.loader')) return openWithoutIntro(); // (very slow device: public/boot-guard.js opened it)
-  await finishCounter(FAST ? 0.01 : 0.2);
+  await finishCounter(FAST ? 0.01 : 0.4);
+  await wait(FAST ? 0 : 60);
   if (!$('.loader')) return openWithoutIntro();
-  playIntro(2.2);
+  playIntro();
 }
 
 // the page without its opening (the preloader is already gone, or fading out over it)
