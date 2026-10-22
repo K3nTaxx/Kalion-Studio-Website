@@ -19,7 +19,7 @@ En local, `?fast` à la fin de l'URL (par exemple `http://localhost:5173/?fast`)
 2. Rien à régler : `netlify.toml` donne la commande (`npm run build`), le dossier publié (`dist`), la version de Node, les en-têtes de sécurité et le cache.
 3. Domaine : **www.kalionstudio.com** (acheté chez IONOS, DNS restés chez IONOS : enregistrement A `@` → `75.2.60.5`, CNAME `www` → `kalionstudio.netlify.app`, pas d'AAAA). Le HTTPS (Let's Encrypt) est fourni et renouvelé par Netlify. L'adresse du site écrite dans les pages (balise canonical, image de partage, `sitemap.xml`, `robots.txt`) est fixée dans `vite.config.js` ; une variable d'environnement `SITE_URL` la remplace si besoin.
 
-Les pages : `/` (le site), `/mentions-legales/`, `/politique-de-confidentialite/`, `/cgv/`, et `404.html` (page introuvable).
+Les pages : `/` (le site), `/site-vitrine/` (la page des annonces Google Ads), `/mentions-legales/`, `/politique-de-confidentialite/`, `/cgv/`, et `404.html` (page introuvable).
 
 ## Le parcours au scroll
 
@@ -57,6 +57,7 @@ Les fichiers de la marque (logos, symbole K, planche d'identité) sont rangés h
 
 - `index.html` : tout le contenu (textes, projets, avis, tarifs, FAQ) et les informations pour Google et les aperçus de liens
 - `mentions-legales/`, `politique-de-confidentialite/`, `cgv/`, `404.html` : les pages légales et la page introuvable (`src/legal.js`, `src/legal.css`)
+- `site-vitrine/` : la page d'atterrissage des annonces « Site vitrine » (`src/vitrine.js`, `src/vitrine.css`). Rapide : ni préchargeur, ni WebGL, ni défilement doux ; le verre liquide y est en images rendues depuis les scènes du site (`public/img/vitrine/`, outil `reseaux/outils/captures-3d.mjs`). L'offre et le prix dès le premier écran, réalisations, inclus, étapes, tarifs, avis, FAQ, puis le même formulaire « devis » que l'accueil (mêmes champs, envoyé à « / » ; sa `source` finit par « page Site vitrine »). Sur téléphone, une barre « Recevoir mon devis gratuit » + WhatsApp reste à portée de pouce. Distrib-Sud étant le nom commercial du studio, la page ne le présente ni comme client ni dans les avis.
 - `src/styles.css` : design system et styles (ordinateur)
 - `src/mobile.css` : la version téléphone
 - `src/main.js` : scroll fluide (Lenis), animations (GSAP ScrollTrigger), curseur, interactions

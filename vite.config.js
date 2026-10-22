@@ -13,6 +13,7 @@ const SITE_URL = (process.env.SITE_URL || 'https://www.kalionstudio.com').replac
 // a page's content changes: a date that moves at every build tells search engines nothing)
 const PAGES = [
   { path: '/', priority: '1.0', lastmod: '2026-10-20' },
+  { path: '/site-vitrine/', priority: '0.9', lastmod: '2026-10-22' },
   { path: '/mentions-legales/', priority: '0.3', lastmod: '2026-10-02' },
   { path: '/politique-de-confidentialite/', priority: '0.3', lastmod: '2026-10-20' },
   { path: '/cgv/', priority: '0.4', lastmod: '2026-10-20' },
@@ -105,6 +106,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(ROOT, 'index.html'),
+        vitrine: resolve(ROOT, 'site-vitrine/index.html'),
         mentions: resolve(ROOT, 'mentions-legales/index.html'),
         confidentialite: resolve(ROOT, 'politique-de-confidentialite/index.html'),
         cgv: resolve(ROOT, 'cgv/index.html'),
