@@ -762,6 +762,36 @@ summary:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; bo
 .end__links { display: flex; flex-wrap: wrap; gap: 10px 26px; }
 .end__links a { color: var(--fg-2); transition: color 0.4s; }
 .end__links a:hover { color: var(--ember); }
+.end__cookies { color: var(--fg-2); font: inherit; letter-spacing: inherit; text-transform: inherit; transition: color 0.4s; }
+.end__cookies:hover { color: var(--ember); }
+
+/* cookies: a small card, the two choices the same size */
+.consent {
+  position: fixed;
+  left: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 65;
+  width: min(410px, calc(100vw - 32px));
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  background: rgba(23, 18, 15, 0.95);
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 24px 60px rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s var(--ease-out), transform 0.6s var(--ease-out);
+}
+.consent.is-in { opacity: 1; transform: none; }
+.consent__text { color: var(--fg-2); font-size: 14px; line-height: 1.5; }
+.consent__text a { color: var(--ivory); border-bottom: 1px solid var(--ember); }
+.consent__btns { display: flex; gap: 8px; margin-top: 14px; }
+.consent__btn { flex: 1; height: 42px; border-radius: 100px; border: 1px solid var(--line-strong); font-size: 14px; font-weight: 500; transition: border-color 0.4s, background-color 0.4s, color 0.4s; }
+.consent__btn--ok { border-color: transparent; background: var(--ivory); color: var(--ink); }
+@media (hover: hover) {
+  .consent__btn:hover { border-color: var(--ember); }
+  .consent__btn--ok:hover { background: var(--ember); }
+}
 
 /* the phone's bar: the quote always within thumb's reach */
 .mbar { display: none; }
@@ -943,7 +973,9 @@ summary:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; bo
 
 /* the bar slides away while a field is being filled in (the keyboard is up) */
 @media (max-width: 860px) {
-  body:has(.form :focus) .mbar { transform: translateY(calc(100% + 40px)); visibility: hidden; transition: transform 0.6s var(--ease), visibility 0s linear 0.6s; }
+  body:has(.form :focus) .mbar,
+  .consent-open .mbar { transform: translateY(calc(100% + 40px)); visibility: hidden; transition: transform 0.6s var(--ease), visibility 0s linear 0.6s; }
+  .consent { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); width: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

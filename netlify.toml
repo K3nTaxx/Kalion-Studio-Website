@@ -33,10 +33,12 @@
 # The contact form posts to the site itself (Netlify Forms, see main.js): 'self' covers it.
 # If it is ever connected to another service (Formspree, Resend…), add its address to
 # connect-src (and form-action if it posts a form).
+# Google Ads (the conversion tag): allowed here, but only /site-vitrine/ loads it, and only after
+# the visitor accepts the cookie (src/vitrine.js).
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; media-src 'self'; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.google.com https://www.google.fr; font-src 'self' data:; connect-src 'self' https://www.google.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://pagead2.googlesyndication.com https://www.googletagmanager.com; frame-src https://td.doubleclick.net https://www.googletagmanager.com; media-src 'self'; manifest-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; frame-ancestors 'none'; upgrade-insecure-requests"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"

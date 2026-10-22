@@ -430,9 +430,20 @@
         <a href="/mentions-legales/">Mentions légales</a>
         <a href="/politique-de-confidentialite/">Confidentialité</a>
         <a href="/cgv/">CGV</a>
+        <button class="end__cookies" type="button" data-consent-open>Cookies</button>
       </nav>
     </div>
   </footer>
+
+  <!-- cookies: Google Ads measures the quote requests only if the visitor accepts (vitrine.js);
+       nothing is loaded before that -->
+  <div class="consent" role="dialog" aria-label="Cookies" hidden data-nosnippet>
+    <p class="consent__text">Nous utilisons un cookie Google Ads pour mesurer les demandes de devis venues de nos annonces. Rien d'autre. <a href="/politique-de-confidentialite/#s8">En savoir plus</a></p>
+    <div class="consent__btns">
+      <button class="consent__btn" type="button" data-consent="denied">Refuser</button>
+      <button class="consent__btn consent__btn--ok" type="button" data-consent="granted">Accepter</button>
+    </div>
+  </div>
 
   <!-- téléphone : le devis toujours à portée de pouce -->
   <div class="mbar" data-nosnippet>

@@ -21,6 +21,94 @@ const observe = (el, fn, opts) => {
 // (still below the fold when the page opens: those can wait to be revealed)
 const belowFold = (el) => el.getBoundingClientRect().top > window.innerHeight * 0.92;
 
+/* ------------------------------------------------------------------
+   Google Ads: the quote requests sent from this page are counted as
+   conversions, only if the visitor accepts the cookie (the banner).
+   Nothing from Google is loaded before « Accepter »; the choice is kept
+   6 months on the device, and the footer's « Cookies » reopens it.
+------------------------------------------------------------------ */
+const ADS_ID = 'AW-18526991107';
+const ADS_LEAD = 'AW-18526991107/IhCPCO6n-6UdEIPmrYJF'; // conversion « Demande de devis »
+const CONSENT_KEY = 'kalion-consent';
+const CONSENT_DAYS = 182;
+const ads = { on: false };
+
+const readConsent = () => {
+  try {
+    const c = JSON.parse(localStorage.getItem(CONSENT_KEY) || 'null');
+    if (c && Date.now() - c.at < CONSENT_DAYS * 864e5) return c.v;
+  } catch (err) {
+    // (storage blocked: the banner is asked again)
+  }
+  return null;
+};
+const saveConsent = (v) => {
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify({ v, at: Date.now() }));
+  } catch (err) {
+    // (storage blocked: the choice holds for this visit only)
+  }
+};
+function loadAds() {
+  if (ads.on) return;
+  ads.on = true;
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function gtag() {
+    window.dataLayer.push(arguments);
+  };
+  // measurement only: no ad personalisation, no analytics
+  window.gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'denied', analytics_storage: 'denied' });
+  window.gtag('js', new Date());
+  window.gtag('config', ADS_ID);
+  const s = document.createElement('script');
+  s.async = true;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${ADS_ID}`;
+  document.head.append(s);
+}
+// a refusal after an acceptance: Google stops, its cookies are removed
+function stopAds() {
+  if (ads.on) window.gtag('consent', 'update', { ad_storage: 'denied', ad_user_data: 'denied' });
+  const host = location.hostname.replace(/^www\./, '');
+  document.cookie
+    .split(';')
+    .map((c) => c.split('=')[0].trim())
+    .filter((name) => /^(_gcl|_gac)/.test(name))
+    .forEach((name) => {
+      [``, `; domain=${host}`, `; domain=.${host}`].forEach((d) => (document.cookie = `${name}=; Max-Age=0; path=/${d}`));
+    });
+}
+const trackLead = () => {
+  if (ads.on && window.gtag) window.gtag('event', 'conversion', { send_to: ADS_LEAD, value: 1.0, currency: 'EUR' });
+};
+
+function initConsent() {
+  const box = $('.consent');
+  if (!box) return;
+  const open = () => {
+    box.hidden = false;
+    document.documentElement.classList.add('consent-open');
+    requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add('is-in')));
+  };
+  const close = () => {
+    box.classList.remove('is-in');
+    document.documentElement.classList.remove('consent-open');
+    setTimeout(() => (box.hidden = true), 600);
+  };
+  $$('[data-consent]', box).forEach((b) =>
+    b.addEventListener('click', () => {
+      const v = b.dataset.consent;
+      saveConsent(v);
+      if (v === 'granted') loadAds();
+      else stopAds();
+      close();
+    })
+  );
+  $$('[data-consent-open]').forEach((b) => b.addEventListener('click', open));
+  const choice = readConsent();
+  if (choice === 'granted') loadAds();
+  else if (choice === null) setTimeout(open, 1200);
+}
+
 let toastTimer;
 function toast(msg, ms = 2600) {
   const t = $('.toast');
@@ -406,6 +494,7 @@ function initForm() {
     send.removeAttribute('aria-busy');
 
     if (result === 'ok') {
+      trackLead();
       resetForm();
       label.textContent = 'Demande envoyée ✓';
       status.innerHTML = '<i class="dot"></i>Bien reçu · Réponse sous 24&nbsp;h';
@@ -429,6 +518,7 @@ function initForm() {
   });
 }
 
+initConsent();
 initBars();
 initReveals();
 initStack();

@@ -39,7 +39,7 @@ Questions fréquentes
 - [Contact](https://www.kalionstudio.com/#contact): formulaire de demande de devis, WhatsApp, e-mail
 - [Conditions générales de vente](https://www.kalionstudio.com/cgv/): devis, prix, paiement, délais, abonnement, propriété
 - [Mentions légales](https://www.kalionstudio.com/mentions-legales/): éditeur, hébergeur (Netlify), propriété intellectuelle
-- [Politique de confidentialité](https://www.kalionstudio.com/politique-de-confidentialite/): données du formulaire ; aucun cookie, aucun traceur
+- [Politique de confidentialité](https://www.kalionstudio.com/politique-de-confidentialite/): données du formulaire ; un seul cookie, de mesure Google Ads, sur la page des annonces et seulement avec accord
 
 ## Réseaux officiels
 - [Instagram @kalion.studio](https://www.instagram.com/kalion.studio/): compte officiel de Kalion Studio
